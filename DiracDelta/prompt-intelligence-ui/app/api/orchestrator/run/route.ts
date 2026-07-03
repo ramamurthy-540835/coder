@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
+import fs from 'fs';
 
 const execFileAsync = promisify(execFile);
 
@@ -12,6 +13,12 @@ const ALLOWED_COST_MODES = new Set(['low', 'balanced', 'best']);
 
 function coderRoot() {
   return process.env.CODER_ROOT || path.resolve(process.cwd(), '../..');
+}
+
+function pythonBinary(root: string) {
+  if (process.env.PYTHON_BIN) return process.env.PYTHON_BIN;
+  const venvPython = path.join(root, '.venv', 'bin', 'python');
+  return fs.existsSync(venvPython) ? venvPython : 'python3';
 }
 
 function cleanList(value: unknown): string[] {
@@ -66,7 +73,8 @@ export async function POST(request: Request) {
     }
 
     const cwd = coderRoot();
-    const { stdout, stderr } = await execFileAsync('python3', args, {
+    const python = pythonBinary(cwd);
+    const { stdout, stderr } = await execFileAsync(python, args, {
       cwd,
       env: {
         ...process.env,
@@ -87,6 +95,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       cwd,
+      python,
       args,
       dryRun,
       result: parsed,
