@@ -1,0 +1,11 @@
+# .gcloudignore at parent root
+# Prevent uploading massive node_modules and Next.js build files to GCS
+.gcloudignore
+.git
+.gitignore
+**/node_modules/
+**/.next/
+backups/
+logs/
+saved_prompts/
+qa_review/

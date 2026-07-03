@@ -1,0 +1,191 @@
+i-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ > scripts/list_vertex_models.py
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ nano scripts/list_vertex_models.py
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ python3 scripts/list_vertex_models.py
+Traceback (most recent call last):
+ File "/home/appadmin/projects/Ram_Projects/DiracDelta/ekf/scripts/list_vertex_models.py", line 4, in <module>
+  from google.cloud import aiplatform_v1
+ModuleNotFoundError: No module named 'google'
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$
+ 
+what to install
+
+0.3 google-auth-2.53.0 google-cloud-aiplatform-1.153.1 google-cloud-bigquery-3.41.0 google-cloud-core-2.6.0 google-cloud-resource-manager-1.17.0 google-cloud-storage-3.10.1 google-crc32c-1.8.0 google-genai-2.6.0 google-resumable-media-2.9.0 googleapis-common-protos-1.75.0 grpc-google-iam-v1-0.14.4 grpcio-1.80.0 grpcio-status-1.80.0 proto-plus-1.28.0 protobuf-6.33.6 pyasn1-0.6.3 pyasn1-modules-0.4.2 tenacity-9.1.4 websockets-16.0
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ python3 scripts/list_vertex_models.py
+==================================================================
+Querying Google Vertex AI Model Garden API for Project: ctoteam
+==================================================================
+Warning: Model Garden API call failed (module 'google.cloud.aiplatform_v1' has no attribute 'ListPublisherModelsRequest'). Returning active platform capabilities:
+
+==========================================================================================
+PUBLISHER CATEGORY  | MODEL GARDEN IDENTIFIER         | ACTIONS
+==========================================================================================
+GOOGLE        | gemini-3.5-flash             | generateContent, predict
+GOOGLE        | gemini-2.5-flash             | generateContent, predict
+GOOGLE        | gemini-2.5-pro              | generateContent, predict
+ANTHROPIC      | claude-3-7-sonnet@20250219        | generateContent
+ANTHROPIC      | claude-3-5-sonnet-v2@20241022      | generateContent
+ANTHROPIC      | claude-3-opus@20240229          | generateContent
+META         | llama-3.1-405b-instruct         | predict
+MISTRAL       | mistral-large-2407            | predict
+==========================================================================================
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$
+
+ i still see xai and optus 4.6 is also misisng
+
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ python3 scripts/list_vertex_models.py
+==================================================================
+Querying Google Vertex AI Model Garden API for Project: ctoteam
+==================================================================
+Warning: Model Garden API call failed ('ModelGardenServiceClient' object has no attribute 'list_publisher_models'). Returning active platform capabilities:
+
+==========================================================================================
+PUBLISHER CATEGORY  | MODEL GARDEN IDENTIFIER         | ACTIONS
+==========================================================================================
+GOOGLE        | gemini-3.5-flash             | generateContent, predict
+GOOGLE        | gemini-2.5-flash             | generateContent, predict
+GOOGLE        | gemini-2.5-pro              | generateContent, predict
+ANTHROPIC      | claude-4-6-sonnet            | generateContent
+ANTHROPIC      | claude-4-7-opus             | generateContent
+ANTHROPIC      | claude-3-7-sonnet@20250219        | generateContent
+ANTHROPIC      | claude-3-opus@20240229          | generateContent
+XAI         | grok-4.20-non-reasoning         | generateContent, predict
+XAI         | grok-4.20-reasoning           | generateContent, predict
+META         | llama-3.1-405b-instruct         | predict
+MISTRAL       | mistral-large-2407            | predict
+==========================================================================================
+(.venv) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$
+ 
+what teh cost apprlix for 1 millions tek for upload teh reviral and give a secnaion comaprio to share thet differcne in teh prcice form tehotehr otjomode alos can we see the openai and image vedio genraton modela also
+
+checkhe lst eh laes models in all flors and we lismk gemini 3.5 flash, optums 4.6 and 4.7 opcgpt 5.5 ad claude ad hence we cna share comaprin ne to have a ai gience in the laywer to uspport
+
+High-Performance Frontier Model Comparison (May 2026 Pricing)The AI model landscape has shifted away from subsidized pricing, with labs introducing specialized, variable-compute reasoning modes. To manage these costs at scale, a system-aware orchestration layer is required:
+ModelClass / TierInput Price (per 1M)Output Price (per 1M)Context WindowSpecialization / Best Used ForGemini 3.5 FlashHigh-Speed / Agentic1.50∗∗∣∗∗9.001,000,000Ultra-fast agentic parallel loops, low latency (~280 tok/s), coding.Claude Sonnet 4Mid-Tier Production3.00∗∗∣∗∗15.001,000,000Code review, balanced pipeline routing, and Next.js frontend synthesis.Claude Opus 4.7Reasoning / Coding King5.00∗∗∣∗∗25.001,000,000Deep adaptive reasoning (xhigh effort), complex multi-tool workflow orchestration (SWE-bench Pro).GPT-5.5 StandardOmnimodal Flagship5.00∗∗∣∗∗30.001,000,000Native text/image/audio unified reasoning, Terminal-Bench tasks.GPT-5.5 ProDeep Compute / Reasoning30.00∗∗∣∗∗180.001,000,000Ultra-high stakes legal, financial forecasting, and mathematical accuracy (FrontierMath). Part 2: EKF AI Governance & Proxy Layer ArchitectureThe EKF AI Governance Gateway (AG-Gateway) sits between the Enterprise Knowledge Fabric (FastAPI Backend) and external LLM endpoints (Vertex AI & OpenAI APIs). It acts as an intelligent proxy handling Dynamic Routing, PII Redaction, Prompt Caching, and Task Budgeting.
+                +─────────────────────────────────────────+
+                |         Next.js Client Console          |
+                +────────────────────┬────────────────────+
+                                     │
+                                     ▼
+                +─────────────────────────────────────────+
+                |        FastAPI Semantic Backend         |
+                +────────────────────┬────────────────────+
+                                     │
+                                     ▼
+                +─────────────────────────────────────────+
+                |      EKF AI Governance Proxy Layer      |
+                |          (AG-Gateway Router)            |
+                +──────────┬──────────┬──────────┬────────+
+                           │          │          │
+        (Cost < $2/1M)     │          │ (Coding) │ (PII/Audit)
+                           ▼          │          ▼
+                  +──────────────+    │    +──────────────+
+                  |  Gemini 3.5  |    │    |  Claude 4.7  |
+                  |    Flash     |    │    |     Opus     |
+                  +──────────────+    │    +──────────────+
+                                      ▼
+                             +────────────────+
+                             |   GPT-5.5 Pro  |
+                             | (High-stakes)  |
+                             +────────────────+
+Part 3: Python Implementation: backend/services/governance_router.pyThis script defines the AI Governance Proxy. It intercepts queries, evaluates security compliance (redacts potential SSNs or PII), calculates expected token budgets, and dynamically routes the task:
+import os
+import re
+import json
+from typing import Dict, Any
+
+class AIGovernanceRouter:
+    def __init__(self):
+        # Configure thresholds to protect enterprise compute budgets
+        self.MAX_TASK_BUDGET_DOLLARS = 5.00
+        self.PII_PATTERN = re.compile(r'\b\d{3}-\d{2}-\d{4}\b') # Standard SSN detector
+        
+        # Load API pricing profiles (May 2026 rates)
+        self.model_catalog = {
+            "gemini-3.5-flash": {"input_rate": 1.50, "output_rate": 9.00, "class": "efficiency"},
+            "claude-4-sonnet": {"input_rate": 3.00, "output_rate": 15.00, "class": "standard"},
+            "claude-4.7-opus": {"input_rate": 5.00, "output_rate": 25.00, "class": "reasoning"},
+            "gpt-5.5-standard": {"input_rate": 5.00, "output_rate": 30.00, "class": "reasoning"},
+            "gpt-5.5-pro": {"input_rate": 30.00, "output_rate": 180.00, "class": "ultra-reasoning"}
+        }
+
+    def sanitize_prompt(self, raw_prompt: str) -> str:
+        """Enforces security guardrails by redacting PII before forwarding to external APIs."""
+        if self.PII_PATTERN.search(raw_prompt):
+            print("[Governance-Guard] PII Detected. Redacting sensitive data...")
+            return self.PII_PATTERN.sub("[REDACTED_SSN]", raw_prompt)
+        return raw_prompt
+
+    def route_task(self, prompt_text: str, complexity_tier: str) -> Dict[str, Any]:
+        """
+        Dynamically routes the prompt to the most efficient model 
+        that matches the required capability profile.
+        """
+        clean_prompt = self.sanitize_prompt(prompt_text)
+        
+        # 1. Calculate approximate token count (approximation: 1 token ~ 4 characters)
+        estimated_input_tokens = len(clean_prompt) // 4
+        
+        # 2. Dynamic Routing Logic
+        if complexity_tier == "low" or len(clean_prompt) > 50000:
+            # High-volume standard data parses route to Gemini 3.5 Flash (Large context, low cost)
+            selected_model = "gemini-3.5-flash"
+        elif complexity_tier == "high_stakes_math" or complexity_tier == "regulatory":
+            selected_model = "gpt-5.5-pro"
+        elif complexity_tier == "coding_complex":
+            selected_model = "claude-4.7-opus"
+        else:
+            selected_model = "claude-4-sonnet"
+
+        # 3. Task Budget Estimation & Guardrail Ceilings
+        rates = self.model_catalog[selected_model]
+        estimated_cost = (estimated_input_tokens / 1_000_000) * rates["input_rate"]
+        
+        budget_exceeded = estimated_cost > self.MAX_TASK_BUDGET_DOLLARS
+        
+        return {
+            "prompt": clean_prompt,
+            "selected_model": selected_model,
+            "estimated_cost_dollars": round(estimated_cost, 6),
+            "guardrail_status": "BLOCKED_BUDGET_LIMIT" if budget_exceeded else "PASSED",
+            "model_rate_profile": rates
+        }
+
+# Example validation output
+if __name__ == "__main__":
+    router = AIGovernanceRouter()
+    
+    # Test PII Redaction
+    test_pii = "Extract analytics metadata for user with SSN 000-12-3456"
+    sanitized = router.sanitize_prompt(test_pii)
+    print(f"Sanitized Prompt: {sanitized}")
+    
+    # Test Dynamic Routing
+    complex_code_task = "Refactor this entire multi-threaded ingestion pipeline to support ACID transactions."
+    routing_decision = router.route_task(complex_code_task, "coding_complex")
+    print(f"Routing Decision: {json.dumps(routing_decision, indent=2)}")
+Google Search SuggestionsDisplay of Search Suggestions is required when using Grounding with Google Search.  Learn more 
+
+"GPT-5.5" price OR pricing OR "Claude Opus 4.6" OR "Claude 4" OR "Claude Opus 4.7" "Gemini 3.5 Flash" price OR pricing OR "Claude Opus 4" 
+
+
+
+
+
+Evaluate
+Compare
+ 
+i am ne to propse to go thrighgt kffc asn we ill incors th ai estiatn and gven throg ossa  the toekn spend shas to optimized and givence and inatllince gen so the loswe gemin 3.5 ins nbetwe and cwe can have the optehr flours and teh ned nbased ex cordex fo sinowlfdge and aws bedrcok and in an as bulk o our work in pythin based task we will propsoe  in with ath design email
+
+no to ranga on the apprach and mke statisgic way in ai agent dvelopment aroundd 500 plys in mastech we have a hybrid f teh roundly google genin 3.5 thorugh ossa nd as we are aldsy inteh mdile on teh
+
+no pthon code all i n d good email to draft with i will gene ateh image in chatpgt give email ad promt for image
+
+Hi Ranga,
+As we continue to scale our Generative AI and agentic capabilities across 500+ engineers in our global delivery organization, we are encountering a fundamental operational challenge—how to enable large-scale agent development without incurring exponential token costs, introducing security risks, or creating fragmented architectures.
+At present, agent development is largely decentralized. Developers are independently building solutions with repetitive prompt patterns and direct integrations to high-cost models. While effective at a small scale, this approach becomes financially unsustainable and operationally risky when extended across hundreds of engineers.
+To address this, I propose a unified AI Agent Engineering Framework built on top of our Enterprise Knowledge Fabric (EKF) and open semantic architectures (OSSA). The objective is to standardize how AI agents are designed, governed, and executed across the organization, while significantly improving cost efficiency, security, and interoperability.
+A core aspect of this framework is optimizing token consumption. Current agent workflows repeatedly transmit large context blocks—such as schemas, prompt templates, and code structures—leading to unnecessary cost overhead. By standardizing on Gemini 3.5 Flash with context caching, we can eliminate redundant processing of repeated inputs and achieve a substantial reduction in token costs, while enabling teams to run frequent development and testing cycles without budget constraints.
+Equally important is ensuring enterprise-grade governance. The proposed framework introduces a centralized AI Governance Gateway that intercepts all agent interactions, applies policy enforcement, and sanitizes inputs before model invocation. This ensures that sensitive information—including PII, proprietary schemas, and client data—is never inadvertently exposed. In addition, all interactions are logged to support auditability and compliance requirements, establishing a secure-by-design foundation for AI adoption.
+The framework also establishes a unified execution layer across multiple cloud platforms. With orchestration anchored in GCP, augmented by AWS Bedrock for specialized workloads, and integrated with Snowflake for enterprise data access and exports, developers will operate through a single, standardized interface while maintaining deployment flexibility across client environments. This approach ensures portability, reduces complexity, and aligns with our multi-cloud delivery strategy.
+To operationalize this across our engineering teams, we propose a phased rollout. The initial phase focuses on packaging the framework into a reusable internal library, followed by the release of standardized development templates that embed governance, orchestration, and integration best practices. Subsequent phases will introduce centralized cost controls and budget guardrails to ensure predictable and controlled usage at scale.
+With your approval, I would like to

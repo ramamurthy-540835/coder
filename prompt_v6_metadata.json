@@ -1,0 +1,12 @@
+{
+  "project": "ctoteam",
+  "prompt_uid": "vertexai:3381323161097207808",
+  "run_id": "97836b18-6f39-43ba-b234-c3740a866a8d",
+  "chunk_count": 34,
+  "reconstructed_chars": 498974,
+  "output_dir": "/home/appadmin/projects/Ram_Projects/DiracDelta/coder",
+  "files": [
+    "prompt_v6_full.txt",
+    "prompt_v6_chunks.jsonl"
+  ]
+}

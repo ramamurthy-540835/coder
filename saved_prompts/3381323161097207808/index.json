@@ -1,0 +1,16 @@
+{
+  "prompt_id": "3381323161097207808",
+  "project_id": "ctoteam",
+  "location": "us-central1",
+  "model": "gemini-3.5-flash",
+  "chunk_count": 1,
+  "chunk_files": [
+    "chunk_001.md"
+  ],
+  "chunk_size": 15000,
+  "chunk_overlap": 1500,
+  "raw_size_bytes": 200745,
+  "extracted_chars": 4346,
+  "system_instruction_present": true,
+  "created_at": "2026-05-29T01:25:40.040645Z"
+}

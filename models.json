@@ -1,0 +1,58 @@
+{
+  "models": [
+    {
+      "id": "xai/grok-4.3",
+      "name": "xAI Grok 4.3 Reasoning",
+      "provider": "xai",
+      "vertex_model_id": "publishers/xai/models/grok-4.3",
+      "endpoint_type": "vertex_openapi",
+      "region": "global",
+      "input_cost_per_million_tokens": 1.25,
+      "output_cost_per_million_tokens": 2.50,
+      "max_tokens": 256000,
+      "enabled": true,
+      "reasoning_effort": "low"
+    },
+    {
+      "id": "xai/grok-4.3-fast",
+      "name": "xAI Grok 4.3 (Non-Reasoning)",
+      "provider": "xai",
+      "vertex_model_id": "publishers/xai/models/grok-4.3",
+      "endpoint_type": "vertex_openapi",
+      "region": "global",
+      "input_cost_per_million_tokens": 1.25,
+      "output_cost_per_million_tokens": 2.50,
+      "max_tokens": 256000,
+      "enabled": true,
+      "reasoning_effort": "none"
+    },
+    {
+      "id": "gemini-3.5-flash",
+      "name": "Gemini 3.5 Flash",
+      "provider": "vertexai",
+      "vertex_model_id": "gemini-3.5-flash",
+      "input_cost_per_million_tokens": 0.075,
+      "output_cost_per_million_tokens": 0.30,
+      "max_tokens": 1048576,
+      "enabled": true
+    },
+    {
+      "id": "gpt-5.3-codex",
+      "name": "OpenAI GPT-5.3 Codex",
+      "provider": "openai",
+      "input_cost_per_million_tokens": 1.75,
+      "output_cost_per_million_tokens": 14.00,
+      "max_tokens": 400000,
+      "enabled": true
+    },
+    {
+      "id": "claude-sonnet-4.6",
+      "name": "Claude Sonnet 4.6",
+      "provider": "anthropic",
+      "input_cost_per_million_tokens": 3.00,
+      "output_cost_per_million_tokens": 15.00,
+      "max_tokens": 1000000,
+      "enabled": true
+    }
+  ]
+}

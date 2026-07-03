@@ -1,0 +1,321 @@
+2ONrjWlsIti1P5GnOafOIA5B6oG57Pj3cwjUvYVnhjzM5c9GdBeMK_RoTvn7dnVeOgzBuUE8P1Eel0gvoWzKIbY5pM4LXAoLntDgWdFpQpMUWoEmMHQExHfDF8LP2j0nz37nwu-P_lCvnoU_ysCrQC4xaL1F7PB7vj-x9VvgUAwCggEiRD1wc-t8at1XIVVMve3qQYZqloQPj8HJNaA2VQebeSbGfFWEZJH-hkqZoUKtsoZPTcmgu_VZH4RXOl7UA7gVYK8kK9K3AsIUDyPDtWp-JPFSg1EF3S1N9bHz7WiCfHhYFTLGXFQl-N_5bNB_chNIDirMcuS38YlSN6OvaPvcQ9R5aP_RJJfkvfUXc8e3NQzcV1yPzJO0rQ9rG-saNRjyvDaaB5Pb2xuW0ndk9XZrZ1j5icq1pC87jA_V-5QP16mkyfp8erxG9fcgkiTCxVusyy2CwaM5Ylo3FAVILVjiIfDHA673iKx6QxyPOx5eCNWWrkG0601J9P-D1lcSsKeAt9WZUMb45momZKGSpfk4qqzlycCJsBMul8alpPy_m7fHzvhN4o7R3yakJOwLKukNZfaAn44h21K1XWDozVqaHOJGXHc4SJro3LUxv6jA7XWpfnF2HmyrzUDhs3N3B3DvRwXw-KNSM7RxtmbhjLUp2vKt8JR0uFWoV6KmTOMm6KrNtOqdPOUjG_VwdDsbjPT8oHT3pG_rFMdfZpjcpi4t4QVXhRyKX-TztGlyERxMlWp7X4NDGjkFXy_5G3u0Tmw387BB553nKw0yJFgdn0VzZhbxuBrm48x8fb05_5-iHMTrfIrDmgdiHJbyN5LqQeOS8luhJU1W505dlyQ196aj2JF81FLa_kPAh72RWz2bMiN4MUBVJ056_2we7cCgeQU8ysCL1JaAt1KMmbfqWYfQH53gKV9Pzlp0e7NTwjXVOO8nSNxNrZ6-fA3do7VRlulice30yB3Bl5xtGAfZCQsoRnKeRdNEug9N0YbDaIoa1TF-8l02h1jdOWiQde_7U6knaYryk8w37fHAYMXHlXg-l1tme94b2yoydhOheGf6Sns7UwTR2UjO3kzjarM2Y2N1Tf7JpoEiSLktGR6p_l_0xGQ8krumeBxZea_tFW43U8cnfMThy5DmJAue3eU3vDflh5M_ziSmi4OjxEu0taRm6ZVLEEqUV8-1m4c3YZERdTI_VAzTsbJ75Yr5QTomkM-WJ3qT-2BBWsz3Y-RVImlUyOlJrCyzQml-rtjmVBzQ-iJa_tyrq0DucCi-S41NTO7etSFgdm1zQzsZTOCnH6sl0l4rNS0rCzx1di3RlBR1vHDBn-gxKYUbT1gRvA2rXMy47RYaeM7FOMrO1x-WkJ7n5jMqeR6bdzKRLEYEEBrtgeuY14Xmk0Mk2OKNn76DRZwGlK2O_mJcDe7TfFAMOp5tZGXVGRbNdZIWBHZq6DIASzBCpiY5njpajubbdj3e4OM8NtS8ZUk-TwFCe74dzdcv2jUFPPi4liSN5aPRAwg0BJ9lGkDfRnrMYU-szzchpVtnhqFhMD0xMX2QTKzfQyCsl_dIXQ3WPmufwSNu6vDnPxtoo31LioXJ0XC3U9r69XdNLmU1AHI2e-xFvuUNz1Uk7TjU2lPPCiPOt5Ben3QSvF8--Ne_3_a2wG11srVLwztnKoT7adjZzFjjQhPPoCP2x2Gmb_OJolbtNuNfi5sQMDgt1P1wn1XhFddojbp_q-f6Qnmh5N2xf7PVmHjAkTzcFHQUq5XNhsz3m5_YeAkmnfHbbjiZGMWBoagV4ifPCWORWK0ObqpJakv8exB2Ua0l6sg_jszykFX2-HkVwOY_xrD2sdpb3HLrUZBjvCRlS2pNeNV2llaKcl84D9WMFuElu1YF6rRhvtYTU72obIad8epgSVqL27xTSeWD513SFvqevktBteddPuyiBYSy5blEzracCJjCpijI43x9gDA8wdWH6rwTiEjkBqUNhCeOa3z5Qtw1fEchZ6oW1wpqU3Vrer0mTk3S3CBaoaHyqozb6t5nzNCv1VC8kr0TFR8bHf2d8AAiE8ZnICfMQ1bTwt-l-TQI-sedNSjhZlrphLcQ1wh4ikUA_ElJOeIP3RTMILa7csG7yxGtlETq3fV-ET_-baQ_Uq4K34YcNqDd7yG4l-WFblaim6ighPn0nu6uT5pX_YCcgyYfvk9ApMpx55dWToUvWhOWZcmIYJpgqUUr4eug23um59dCvcGkC-eOid4LfBJZdo3mTeuE1j38ECAVOJDBaELW9FucRbCIEbMtj-I7rAR4QkvcPAnRDnMfwXB-9n7GZrwe9vpB9P-j_IJiXObmjHsj4E2_95pXpjyH_DhhWZZAm10KGixf2jD-H_Ze6jrim9h0KtN8cUiuuh861Ltx2oHJyhzxmhfuzHf_IdifSVn5vq-9eSqq4DPMYXb31W0EgVx-cwfx6HbrZwVPk78c88sMDSv8upf8fQDBpbp_C-EPH6Yswru0bvrTvH7F8vZ3_80g_99afQfg2ft926px8nd9dpz8__3ALhu2ypOGCe4aru-2ceJKcFDV10emrb0vfNyONsESn8uNMjsnZJvfvp18-ITldp_6OiGdvpeAzLR_FL9N3ZlOvj2Ovz2YvLOrpPw==
+* SnowSQL * v1.2.32
+Type SQL statements or !help
++----------------------------------------------+------+----------+---------+
+| file                     | size | status  | message |
+|----------------------------------------------+------+----------+---------|
+| year=2026/month=05/data_0_0_0.snappy.parquet | 2069 | UPLOADED |     |
++----------------------------------------------+------+----------+---------+
+1 Row(s) produced. Time Elapsed: 1.875s
+Goodbye!
+
+✓ Snowflake staged files downloaded successfully to /tmp/ekf_export
+
+Uploading Parquet files to GCS BigLake feed bucket...
+Uploading data_0_0_0.snappy.parquet to gs://ekf-biglake-feed/unload/customers/year=2026/month=05/data_0_0_0.snappy.parquet...
+✓ Upload complete.
+
+==================================================
+Cross-Cloud Pipeline Executed Successfully!
+==================================================
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$
+ 
+question is can we savete the seesion s that it will ask in 2nd tiem as we ne dt have it as agent
+
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ nano ~/.snowsql/config
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ cat ~/.snowsql/config
+[connections]
+# *WARNING* *WARNING* *WARNING* *WARNING* *WARNING* *WARNING*
+#
+# The Snowflake user password is stored in plain text in this file.
+# Pay special attention to the management of this file.
+# Thank you.
+#
+# *WARNING* *WARNING* *WARNING* *WARNING* *WARNING* *WARNING*
+
+#If a connection doesn't specify a value, it will default to these
+#
+#accountname = defaultaccount
+#region = defaultregion
+#username = defaultuser
+#password = defaultpassword
+#dbname = defaultdbname
+#schemaname = defaultschema
+#warehousename = defaultwarehouse
+#rolename = defaultrolename
+#proxy_host = defaultproxyhost
+#proxy_port = defaultproxyport
+
+[connections.example]
+#Can be used in SnowSql as #connect example
+
+accountname = accountname
+username = username
+password = password1234
+
+[variables]
+# SnowSQL defines the variables in this section on startup.
+# You can use these variables in SQL statements. For details, see
+# https://docs.snowflake.com/en/user-guide/snowsql-use.html#using-variables
+
+# example_variable=27
+
+[options]
+# If set to false auto-completion will not occur interactive mode.
+auto_completion = True
+
+# main log file location. The file includes the log from SnowSQL main
+# executable.
+log_file = ~/.snowsql/log
+
+# bootstrap log file location. The file includes the log from SnowSQL bootstrap
+# executable.
+# log_bootstrap_file = ~/.snowsql/log_bootstrap
+
+# Default log level. Possible values: "CRITICAL", "ERROR", "WARNING", "INFO"
+# and "DEBUG".
+log_level = INFO
+
+# Timing of sql statments and table rendering.
+timing = True
+
+# Table format. Possible values: psql, plain, simple, grid, fancy_grid, pipe,
+# orgtbl, rst, mediawiki, html, latex, latex_booktabs, tsv.
+# Recommended: psql, fancy_grid and grid.
+output_format = psql
+
+# Keybindings: Possible values: emacs, vi.
+# Emacs mode: Ctrl-A is home, Ctrl-E is end. All emacs keybindings are available in the REPL.
+# When Vi mode is enabled you can use modal editing features offered by Vi in the REPL.
+key_bindings = emacs
+
+# OCSP Fail Open Mode.
+# The only OCSP scenario which will lead to connection failure would be OCSP response with a
+# revoked status. Any other errors or in the OCSP module will not raise an error.
+# ocsp_fail_open = True
+
+# Enable temporary credential file for Linux users
+# For Linux users, since there are no OS-key-store, an unsecure temporary credential for SSO can be enabled by this option. The default value for this option is False.
+# client_store_temporary_credential = True
+
+# Select statement split method (default is to use the sql_split method in snowsql, which does not support 'sql_delimiter')
+# sql_split = snowflake.connector.util_text # to use connector's statement_split which has legacy support to 'sql_delimiter'.
+
+# Force the result data to be decoded in utf-8. By default the value is set to false for compatibility with legacy data. It is recommended to set the value to true.
+# json_result_force_utf8_decoding = False
+
+# Repository Base URL
+# The endpoint to download the SnowSQL main module.
+repository_base_url = https://sfc-repo.snowflakecomputing.com/snowsql
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$
+
+ give th full crect file for our config
+
+to add teh aws in tje portformal alsong with snowflake, i ne dto aces the fro the i ne dto write email ro te approval for aws mastech
+
+fro biglake do i ned aws befrock as we willbe access g te eh fiels in mau s3 pls proelly lookig for ekf
+
+I ne dto send the smae stoy line o frt azure an ddata abrics for te teh fee biglak eachof e use wei l te different dataset ex retail in snaowgale, azure, manufacting, databrick healthcare, aws - banking etc i e send resparte email i fisng snolwfalej and aws
+
+no i ne dto write to arun teh project owned fro te ekf to aces tie teh the persomi for teh thsi app to access nake t very ciret way s t inetral it approavl process
+
+no add for eh aws, azure, databricks access for teh requrement invaillyaly
+
+add dtabrcsk and separete emails
+
+Raise a requestNew IncidentService Catalog
+
+My Pending Approvals
+Notifications 
+
+
+
+
+Ramamurthy Valavandan
+ramamurthy.valavandan@mastechdigital.comMy Account  Personalize
+ My Details Sign out
+Display ModeLight
+Dark
+SystemLayout PersonalizationPreferencesAccessibility Controls
+
+Layout PersonalizationNavigation Menu
+Sidebar
+
+Sidebar lite
+
+Topbar
+
+Navigation Background
+Charcoal black
+
+Polar white
+
+Preferred Color
+Blue Theme
+Teal Theme
+Purple Theme
+Maroon Theme
+Font Type
+Select
+
+Select
+	 									  									  									 									  									  							
+Zoho Puvi
+Open Sans
+PT Sans
+Droid Sans
+Fira Sans
+Lato
+Roboto
+Font SizeReset
+Aa Aa Aa Aa Aa
+Organize Navigation TabsSave CancelHelpUser GuideVideo TutorialsGetting Started
+Keyboard ShortcutsWhat's NewFAQsForums
+Discover ProductWhat's NewUser Guide
+Keyboard ShortcutsVideo TutorialsForumsHelp Center
+Quick ActionsRemindersMy Reminder(s)
+Add Reminder
+OthersGo to Request(Alt+R)
+My Assets
+Audit Assets
+Recent Items
+Workflow Summary
+
+INSTANCES Mastech Digital Inc. ESM PortalMastech Digital Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ MASTECH DIGITAL  Autonomous Enterprise Support    
+
+  Report an Issue   
+
+  Request a Service 
+ 1 On Hold Requests 0 Pending Tasks 2 Open Requests 0 On Hold Tasks 30 Closed Requests 0 Closed Tasks Announcements
+ No data
+Medium
+IT Infra - Software
+Others
+
+
+
+Create a service request Service Request
+Switch template
+
+Requester Details
+Requester Name Requester Name
+Phone : -Department : Data in MotionJob Title : Architect - Data Engineering...
+ErrorAssets AssetsError
+
+Request Type 
+Request Type
+ErrorPriority 
+Priority
+ErrorSite Site
+ErrorCategory 
+Category
+ErrorSub Category 
+Sub Category
+ErrorItem 
+Item
+ErrorSubject ErrorDescription 
+
+
+PT Sans10
+
+
+
+
+
+Module
+Error
+Attachments
+Drag and drop files hereErrorAdd Request Cancel 
+i ned ge te acess for aws ad databrics as i got acess
+
+no make it simpl Access Provisioning Request: AWS Bedrock no biglake for entpricse kwoe fabrics make it sepaprte rqone for aws and oen databicsk
+
+Hi Team
+
+We have built the Enterprise Knowledge Fabrics.
+We need the external sample of records (max 100) to fetch from the external source system through biglake.
+
+Thanksa
+
+Ram
+
+From: Autonomous Enterprise Support <itdesk@sdp821530383.zm.sdpondemand.com>Sent: Monday, May 25, 2026 11:35 AMTo: Ramamurthy Valavandan <ramamurthy.valavandan@mastechdigital.com>Subject: Your request has been logged with request id ##13251##
+ 
+Dear Ramamurthy Valavandan, This is an acknowledgement mail for your request. Your request has been created with id 13251. The title of the request is : Access Request: Azure Databricks Workspace Token & Unity Catalog (DEV). The status ofZjQcmQRYFpfptBannerStartThis Message Is From an External Sender
+This message came from outside your organization. Check recipients and content before sending.
+ 
+ZjQcmQRYFpfptBannerEnd
+Dear Ramamurthy Valavandan,
+
+This is an acknowledgement mail for your request. Your request has been created with id 13251. The title of the request is : Access Request: Azure Databricks Workspace Token & Unity Catalog (DEV). The status of the request can be tracked at https://request.mastechdigital.com/app/itdesk/ui/requests/188778000018400032/details .
+
+Please get back to us for any further clarifications.
+Priority was set to: Medium 
+​
+**all tickets opened via email are automatically assigned a low priority. If you need to change the priority, please log into request.mastechdigital.com, find your ticket and change the priority.**
+
+
+regards,
+Autonomous Enterprise Support.
+
+i nendto write a few liners to te
+
+i nedexct ack in teh persison level in databricks only ake it clear
+
+i ne dto write emaip;e email
+
+ity with legacy data. It is recommended to set the value to true.
+# json_result_force_utf8_decoding = False
+
+# Repository Base URL
+# The endpoint to download the SnowSQL main module.
+repository_base_url = https://sfc-repo.snowflakecomputing.com/snowsql
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ > ~/.snowsql/config
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ nano ~/.snowsql/config
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$ python3 scripts/snowflake_to_gcs.py
+Traceback (most recent call last):
+ File "/home/appadmin/projects/Ram_Projects/DiracDelta/ekf/scripts/snowflake_to_gcs.py", line 6, in <module>
+  import snowflake.connector
+ModuleNotFoundError: No module named 'snowflake'
+(.venv-vllm) appadmin@chn-mit-genai-dq1:~/projects/Ram_Projects/DiracDelta/ekf$
+
+
+
+can you give a comple read me and propts nd wha is complet ens te scoe an dimpeement in th eproject ekf fr teh scpe of teh work
+
+rist you give th officail scpe ofr ekf in gcp as p r offical document and deaike te hscpe
+
+Official Scope of the Enterprise Knowledge Fabric (EKF) on Google Cloud PlatformMastech Digital Architecture & Delivery Blueprint
+ GCP Native Implementation Specification
+1. Executive Definition & ObjectivesAs defined in the official Mastech Digital EKF framework, the Enterprise Knowledge Fabric (EKF) is a governed semantic infrastructure designed to transform raw, siloed, and structurally disconnected enterprise data into connected, machine-understandable knowledge [5].
+The primary business objective is to eliminate the "semantic gap" (context ambiguity, confident AI hallucinations, and metric inconsistency) [2] by serving as a persistent, queryable Runtime Context API [5, 7]. This API is consumed dynamically by AI agents at inference time to resolve entity references, validate business rules, and ground reasoning in approved enterprise definitions [7].
+2. The 7-Layer Logical Architecture ScopeThe scope of a production-grade EKF implementation on Google Cloud Platform is organized across seven coherent layers, wrapped end-to-end by a continuous governance plane [13, 21].
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L7: GOVERNANCE             | IAM, VPC Service Controls, Cloud DLP, Model Armor, Dataplex |
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L6: CONSUMPTION            | Looker, Vertex AI Search, Apigee, Cloud Run, GKE, BQ Studio|
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L5: INTELLIGENCE & AI      | Vertex AI Gemini, Agent Builder, ADK, BigQuery AI          |
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L4: SEMANTIC & KNOWLEDGE   | Knowledge Catalog, BigQuery Graph, BigQuery Measures       |
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L3: STORAGE & PROCESSING   | BigQuery, Spanner, AlloyDB, Firestore, Cloud Storage       |
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L2: INGESTION & INTEGRATION| Dataflow, Dataproc, Cloud Composer, Pub/Sub, Datastream CDC|
+  +──────────────────────────────────────────────────────────────────────────────────────────+
+  | L1: DATA SOURCES           | Cloud Storage, Pub/Sub, BQ Analytic

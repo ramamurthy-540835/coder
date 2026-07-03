@@ -1,0 +1,15 @@
+{
+  "prompt_id": "1076043101836935168",
+  "raw_size_bytes": 163846,
+  "extracted_chars": 52812,
+  "system_instruction_present": false,
+  "attachments_summary": [
+    {
+      "type": "text/plain",
+      "size_bytes": 30126,
+      "status": "decoded"
+    }
+  ],
+  "chunk_count": 4,
+  "created_at": "2026-05-29T06:44:23.869881+00:00"
+}

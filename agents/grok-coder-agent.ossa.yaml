@@ -1,0 +1,24 @@
+apiVersion: ossa/v0.4.6
+kind: Agent
+metadata:
+  name: grok-coder-agent
+  version: 1.0.0
+  description: "Dynamic Code Generation Agent powered by OSSA Governance"
+spec:
+  llm:
+    provider: ${OSSA_PROVIDER}
+    model: ${OSSA_MODEL}
+  compliance:
+    frameworks: [SOC2, HIPAA]
+  cost:
+    tokenBudget:
+      perExecution: 50000
+    spendLimits:
+      daily: 1.00
+  hitl:
+    enabled: true
+    interventionPoints:
+      - trigger:
+          type: on_condition
+          condition: input_size > 15000
+        mode: ALWAYS

@@ -1,0 +1,107 @@
+• High-Priority Plan
+
+  1. Correctness
+      - Fix stale smoke test expectations: scripts/smoke_test.sh:29 expects files directly under saved_prompts/<prompt_id>/, but
+        agents/prompt_id_coder_agent.py:227 writes into saved_prompts/<prompt_id>/runs/<run_id>/.
+
+      - Standardize prompt chunk content: several readers query chunk_file from BigQuery but only store filenames, not content, e.g.
+        agents/pipeline/shared.py:18. Downstream agents may analyze filenames instead of prompt text.
+
+      - Remove inconsistent artifact names: system.md, system_instructions.md, assembled_requirements.md, final_assembled.md are used
+        by different agents.
+
+  2. Security by Design
+      - Block path traversal before writing generated code. Critical spots:
+          - agents/pipeline/agent5_release.py:17
+          - agents/auto_code_generator.py:120
+
+      - Enforce “generated file path must stay under output root” using Path.resolve().is_relative_to(root).
+      - Remove runtime dependency installation from agents: agents/read_saved_prompt.py:183 and orchestrated variant call pip install
+        during execution.
+
+      - Replace silent exception swallowing in auth/parsing/storage paths with typed errors and structured logs.
+
+  3. Idempotency
+      - BigQuery writes should use deterministic IDs or MERGE, not random UUIDs everywhere. Current load_table_from_json and
+        insert_rows_json paths can duplicate rows on retry.
+
+      - Add idempotency keys based on prompt_uid + raw_hash + version + chunk_order.
+      - Make GCS writes conditional where appropriate: latest pointer updates should only advance if the version is newer.
+
+  4. Comprehensive Testing
+      - Add unit tests for:
+          - Vertex prompt extraction and base64 cleaning.
+          - Chunking with overlap.
+          - generated-file path validation.
+          - BigQuery metadata row construction.
+          - unchanged prompt skip behavior.
+
+      - Add integration tests with fake GCS/BQ clients. Do not require real ctoteam credentials for CI.
+      - Update scripts/smoke_test.sh:1 to use a fixture or mocked API instead of live Vertex AI.
+
+  5. Type Safety
+      - Replace loose dict/any usage with TypedDict or dataclasses for PromptMetadata, PromptChunk, Attachment, RunMetadata, and agent
+        state.
+
+      - clean_node(node: any) should use typing.Any, and return types should be explicit.
+      - Validate LLM JSON responses with Pydantic before using them in agents/pipeline/agent1_discovery.py:16 and agents/pipeline/
+        agent4_compiler.py:19.
+
+  6. Resilience
+      - Add retries with exponential backoff for Vertex, GCS, and BigQuery operations.
+      - Treat LLM JSON parse failures as recoverable with clear diagnostics.
+      - Avoid sys.exit() deep inside library functions; return results/errors and let CLI entrypoints exit.
+
+  7. Modularity
+      - Extract shared clients/config into agents/core/:
+          - config.py
+          - gcp_auth.py
+          - storage.py
+          - bigquery_catalog.py
+          - prompt_extraction.py
+          - llm_clients.py
+
+      - Current logic is duplicated across gcs_prompt_store.py, prompt_id_coder_agent.py, agent_ai_estimator.py, and
+        gcs_prompt_puller_and_estimator.py.
+
+  8. Readability
+      - Split very large scripts, especially agents/gcs_prompt_store.py:1 and agents/agent_code_quality_auditor.py:1.
+      - Replace emoji-heavy operational logs with structured logging fields for machine-readable CI and cloud logs.
+      - Rename phase-specific scripts so the canonical flow is obvious.
+
+  9. Performance
+      - Reuse GCS/BQ clients instead of creating clients inside every helper call.
+      - Avoid repeated blob.exists() calls before downloads where exceptions are sufficient.
+      - Put maximum prompt/file-size guards before sending entire codebases into LLM calls, especially agents/
+        code_analysis_agent.py:117.
+
+  10. Documentation
+
+  - Document the real artifact contract: local paths, GCS layout, BigQuery tables, and required env vars.
+  - Add “agent lifecycle” docs showing which scripts are canonical and which are legacy.
+  - Record supported Python version. prompt_id_coder_agent.py uses Python 3.12-compatible f-string syntax at line 181, while README
+    claims Python 3.11+.
+
+  11. Cost Efficiency
+
+  - Add dry-run/token-estimate modes before model calls.
+  - Cache LLM outputs by input hash.
+  - Use cheaper models for classification/discovery and reserve reasoning models for design/audit.
+  - Add max input character/token limits and summarization fallback.
+
+  12. Self-Critique
+
+  - Make audit agents produce verifiable findings, not just generated reports.
+  - agents/agent_code_quality_auditor.py:345 overwrites code with model output and then reports success even when some validation only
+    warns. Convert this into gated stages: analyze, propose patch, validate, then release.
+
+  - Require each agent to emit: assumptions, confidence, failed checks, skipped checks, and reproducibility metadata.
+
+  Suggested Order
+
+  P0: fix path traversal, stale smoke test, chunk content bug, hard-coded artifact contract drift.
+  P1: introduce typed config/models, idempotent BigQuery writes, mocked tests, retry/error handling.
+  P2: modularize shared GCP/LLM code, improve docs, add cost controls and stronger audit gates.
+
+  I verified python3 -m py_compile agents/prompt_id_coder_agent.py passes in this environment, but the code appears to depend on newer
+  f-string parsing than the README’s Python 3.11 claim.

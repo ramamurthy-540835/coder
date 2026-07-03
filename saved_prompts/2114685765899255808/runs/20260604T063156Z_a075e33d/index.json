@@ -1,0 +1,45 @@
+{
+  "prompt_id": "2114685765899255808",
+  "raw_size_bytes": 6541360,
+  "extracted_chars": 2354473,
+  "system_instruction_present": true,
+  "attachments_summary": [
+    {
+      "type": "text/plain",
+      "size_bytes": 145369,
+      "status": "decoded"
+    },
+    {
+      "type": "text/plain",
+      "size_bytes": 743624,
+      "status": "decoded"
+    },
+    {
+      "type": "text/plain",
+      "size_bytes": 473611,
+      "status": "decoded"
+    },
+    {
+      "type": "text/plain",
+      "size_bytes": 3644,
+      "status": "decoded"
+    },
+    {
+      "type": "text/plain",
+      "size_bytes": 38998,
+      "status": "decoded"
+    },
+    {
+      "type": "text/plain",
+      "size_bytes": 464745,
+      "status": "decoded"
+    },
+    {
+      "type": "text/plain",
+      "size_bytes": 38998,
+      "status": "decoded"
+    }
+  ],
+  "chunk_count": 175,
+  "created_at": "2026-06-04T06:31:56.534396+00:00"
+}

@@ -1,0 +1,100 @@
+================================================================================
+SCOPE: 3 AGENTS FOR CODE ANALYSIS & BUG DETECTION
+================================================================================
+
+AGENT 1: CODE ANALYSIS AGENT
+----------------------------
+Scope: Analyze code structure, algorithms, and patterns
+
+Input Sources:
+  - app/page.tsx (main dashboard component)
+  - components/*.tsx (all React components)
+  - app/api/* (all API route handlers)
+
+What It Does:
+  - Map component hierarchy and dependencies
+  - Identify code patterns (state management, hooks, rendering)
+  - Find inefficient or redundant code sections
+  - List all state variables and their purposes
+  - Identify reusable patterns
+
+Output:
+  - Code structure map (which components depend on what)
+  - Pattern report (repeated patterns found)
+  - Efficiency assessment (bottlenecks, redundant code)
+  - State management diagram
+
+
+AGENT 2: REQUEST FLOW MAPPER
+----------------------------
+Scope: Trace request flow from frontend UI through API routes to backend
+
+Input Sources:
+  - app/page.tsx (all fetch() calls)
+  - app/api/run-pipeline/route.ts
+  - app/api/generate-code/route.ts
+  - app/api/prompts/route.ts
+  - app/api/status/route.ts
+  - Related component files (CodingAgentView, PromptGalleryPanel)
+
+What It Does:
+  - Map each request from UI button click → API endpoint → Backend call
+  - Show data flow (what gets sent, what gets returned)
+  - Identify dependencies between routes (which route calls which)
+  - Trace error paths (where requests can fail, timeout, return 502/503)
+  - Show where environment variables are used
+
+Output:
+  - Request flow diagram (UI → API → Backend for each action)
+  - Dependency graph (route X depends on route Y, calls backend Z)
+  - Data flow map (what data moves where)
+  - Bottleneck identification (where slowdowns/timeouts occur)
+
+
+AGENT 3: BUG DETECTION AGENT
+----------------------------
+Scope: Identify bugs, security issues, error handling gaps, race conditions
+
+Input Sources:
+  - All route handlers (app/api/*/route.ts)
+  - All fetch() calls in components and pages
+  - Error handling blocks
+  - Environment variable usage
+  - State updates and async operations
+
+What It Looks For:
+  - Hardcoded values (IPs, URLs, credentials)
+  - Missing error handling (unhandled promise rejections)
+  - Unhandled edge cases (empty responses, null values)
+  - Race conditions (concurrent state updates)
+  - Timeout vulnerabilities (requests that hang)
+  - Type safety issues (any types, unchecked responses)
+  - Security issues (exposed tokens, unsafe inputs)
+  - Missing null checks
+  - Uninitialized state variables
+
+Output:
+  - Bug list with:
+    * File location (route.ts line X)
+    * Bug description
+    * Severity (Critical/High/Medium/Low)
+    * Potential impact
+    * Suggested fix approach
+
+
+================================================================================
+DEPENDENCIES BETWEEN AGENTS
+================================================================================
+Agent 1 (Code Analysis) → Foundation for understanding what code exists
+Agent 2 (Request Flow) → Depends on Agent 1 (needs to understand code structure)
+Agent 3 (Bug Detection) → Depends on Agents 1 & 2 (uses their maps to find bugs)
+
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+Agent 1: Produces complete map of all components and their relationships
+Agent 2: Traces every API endpoint and shows complete data flow paths
+Agent 3: Identifies ALL hardcoded values, missing error handlers, race conditions
+
+================================================================================
