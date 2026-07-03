@@ -45,6 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout", type=int, default=180)
     parser.add_argument("--selector-mode", choices=["heuristic", "gemini"], default="heuristic")
     parser.add_argument("--selector-model", default="gemini-3.5-flash")
+    parser.add_argument("--cost-mode", choices=["low", "balanced", "best"], default="balanced")
     parser.add_argument("--dry-run", action="store_true", help="Build context and manifest but do not call a model")
     return parser.parse_args()
 
@@ -80,12 +81,14 @@ def main() -> int:
         if args.model_route == "auto":
             selection = select_model(
                 task=args.task,
-                prompt=prompt,
+                prompt=context.prompt_text,
                 mode=args.selector_mode,
                 project_id=args.project_id,
                 location=args.location,
                 selector_model=args.selector_model,
                 timeout_seconds=args.timeout,
+                context_metadata=context.metadata,
+                cost_mode=args.cost_mode,
             )
             selected_route = selection.route
             selection_path = write_selection(selection, evidence_dir)

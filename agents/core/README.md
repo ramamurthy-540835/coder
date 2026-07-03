@@ -66,41 +66,58 @@ The orchestrator writes:
 
 ## Auto Model Selection
 
-The orchestrator now defaults to `--model-route auto`.
+The orchestrator defaults to `--model-route auto`. Auto mode chooses a logical route first, then resolves that route to the currently configured physical model in `models.json`.
 
-By default it uses a zero-cost heuristic selector:
+Logical route map for v1:
 
-```bash
-python3 agents/core/orchestrator.py \
-  --task "Review the agents for security and architecture risks" \
-  --prompt-file prompts/prompt-0 \
-  --context-root agents \
-  --dry-run
+| Logical route | Current physical model | Use case |
+| --- | --- | --- |
+| `fast_code` | `xai/grok-4.3-fast` | Simple code generation, CRUD, scaffolds, straightforward refactors |
+| `balanced_code` | `xai/grok-4.3` | General coding, review, and moderate architecture work |
+| `hard_reasoning` | `xai/grok-4.3` | Security, architecture, hard debugging, production risk |
+| `large_context` | `gemini-3.5-flash` | Large context runs that exceed smaller model windows |
+| `data_report` | `gemini-3.5-flash` | SQL, BigQuery, ETL, reports, summarization |
+| `local_edit` | `gpt-5.3-codex` | Registered placeholder for future direct-edit flows; not auto-selected yet |
+
+GLM-5 is deferred until it is added to `models.json`.
+
+The selector computes:
+
+- complexity score, clamped to 1-10
+- risk score, clamped to 1-10
+- estimated tokens from task + prompt + loaded context
+- feasibility exclusions from `models.json` max token limits
+- estimated chosen-model and alternative-model costs
+- scorecard signals with point values
+
+Safety precedence:
+
+```text
+risk floor > token feasibility > cost-mode bias > base complexity route
 ```
 
-Use Gemini as a JSON selector when you want a model-backed routing decision:
+Cost mode:
 
 ```bash
-python3 agents/core/orchestrator.py \
-  --task "Choose the best model and review this code for production risks" \
-  --model-route auto \
-  --selector-mode gemini \
-  --selector-model gemini-3.5-flash \
-  --prompt-file prompts/prompt-0 \
-  --context-root agents \
-  --dry-run
+--cost-mode low       # bias down one tier only when risk < 6
+--cost-mode balanced  # no bias
+--cost-mode best      # bias up one tier when feasible
 ```
 
-Selector output is written to:
+By default it uses the deterministic local selector:
+
+```bash
+python3 agents/core/orchestrator.py   --task "Review the agents for security and architecture risks"   --model-route auto   --selector-mode heuristic   --cost-mode balanced   --prompt-file prompts/prompt-0   --context-root agents   --dry-run
+```
+
+Use Gemini as a JSON selector only when you want model-assisted routing. Gemini receives the computed metrics and must choose from feasible logical routes:
+
+```bash
+python3 agents/core/orchestrator.py   --task "Choose the best model and review this code for production risks"   --model-route auto   --selector-mode gemini   --selector-model gemini-3.5-flash   --cost-mode balanced   --prompt-file prompts/prompt-0   --context-root agents   --dry-run
+```
+
+Selector evidence is written to:
 
 ```text
 reports/orchestrator/model_selection_*.json
 ```
-
-Routing guide:
-
-- `glm5`: broad drafting, data/report work, cost-conscious generation.
-- `grok43`: balanced coding, review, and architecture work.
-- `grok420_reasoning`: hard reasoning, security, debugging, and complex design.
-- `grok420_non_reasoning`: fast code generation and simple refactors.
-- `codex`: registered placeholder for local direct-edit workflows.

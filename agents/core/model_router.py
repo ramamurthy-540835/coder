@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from agents.core.model_selector import LOGICAL_ROUTE_MODELS
 from agents.runners.vertex_maas_runner import (
     MODEL_PRESETS,
     extract_text,
@@ -51,7 +52,14 @@ LOCAL_ROUTES: dict[str, ModelRoute] = {
 
 
 def resolve_route(name: str, output_dir: str | None = None) -> ModelRoute:
-    """Resolve a named route from built-in presets."""
+    """Resolve a named route from built-in presets or logical routes."""
+    if name in LOGICAL_ROUTE_MODELS:
+        model_id = LOGICAL_ROUTE_MODELS[name]
+        if model_id.startswith("xai/"):
+            return ModelRoute(name, "vertex_maas", "xai", model_id.split("/", 1)[1].replace("-fast", ""), output_dir or f"reports/{name}")
+        if model_id.startswith("gemini"):
+            return ModelRoute(name, "vertex_maas", "google", model_id, output_dir or f"reports/{name}")
+        return ModelRoute(name, "local", None, model_id, output_dir or f"reports/{name}")
     if name in MODEL_PRESETS:
         preset = MODEL_PRESETS[name]
         return ModelRoute(
