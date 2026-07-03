@@ -20,6 +20,12 @@ export default function Home() {
   const [catalogQuery, setCatalogQuery] = useState('');
   const [catalogGapOnly, setCatalogGapOnly] = useState(false);
   const [catalogLoading, setCatalogLoading] = useState(false);
+  const [submitTitle, setSubmitTitle] = useState('');
+  const [submitDescription, setSubmitDescription] = useState('');
+  const [submitPromptText, setSubmitPromptText] = useState('');
+  const [submitProtectionLevel, setSubmitProtectionLevel] = useState('internal');
+  const [submitStatus, setSubmitStatus] = useState('submitted');
+  const [submitResult, setSubmitResult] = useState<any>(null);
 
   const fetchDashboardData = async (uid?: string) => {
     try {
@@ -116,6 +122,40 @@ export default function Home() {
       setActionLog(`Network Error: ${e.message}`);
     } finally {
       setOrchestratorLoading(false);
+    }
+  };
+
+
+  const submitPromptToCatalog = async () => {
+    setCatalogLoading(true);
+    setActionLog('Submitting prompt to PRISM catalog...');
+    try {
+      const res = await fetch('/api/prompt-catalog/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: submitTitle,
+          description: submitDescription,
+          promptText: submitPromptText,
+          protectionLevel: submitProtectionLevel,
+          status: submitStatus,
+          approved: submitStatus === 'approved' || submitStatus === 'protected',
+          submittedBy: 'prism-ui-user',
+        })
+      });
+      const json = await res.json();
+      setSubmitResult(json);
+      if (json.success) {
+        setActionLog(`Prompt submitted to BigQuery.\n${JSON.stringify(json.submission, null, 2)}`);
+        setSelectedUid(json.submission.promptUid);
+        await fetchPromptCatalog();
+      } else {
+        setActionLog(`Prompt submit failed: ${json.error || 'Unknown error'}\n${JSON.stringify(json.details || {}, null, 2)}`);
+      }
+    } catch (e: any) {
+      setActionLog(`Prompt submit error: ${e.message}`);
+    } finally {
+      setCatalogLoading(false);
     }
   };
 
@@ -358,6 +398,72 @@ export default function Home() {
                     />
                     gaps only
                   </label>
+                </div>
+
+                <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4 mb-5">
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <div>
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Submit / Protect Prompt</div>
+                      <p className="text-xs text-slate-400 mt-1">Create a PRISM-managed prompt record in BigQuery. This is the intake path for prompts that should not bypass governance.</p>
+                    </div>
+                    <button
+                      onClick={submitPromptToCatalog}
+                      disabled={catalogLoading || !submitPromptText.trim()}
+                      className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50"
+                    >
+                      <CheckCircle2 className="w-4 h-4" /> Submit Prompt
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <input
+                      value={submitTitle}
+                      onChange={(e) => setSubmitTitle(e.target.value)}
+                      placeholder="Prompt title"
+                      className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <input
+                      value={submitDescription}
+                      onChange={(e) => setSubmitDescription(e.target.value)}
+                      placeholder="Short business purpose / owner notes"
+                      className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <textarea
+                    value={submitPromptText}
+                    onChange={(e) => setSubmitPromptText(e.target.value)}
+                    placeholder="Paste the prompt or requirement here. PRISM will classify it and store it in BigQuery."
+                    className="w-full min-h-32 bg-slate-900 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                    <select
+                      value={submitProtectionLevel}
+                      onChange={(e) => setSubmitProtectionLevel(e.target.value)}
+                      className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="none">none</option>
+                      <option value="internal">internal</option>
+                      <option value="production">production</option>
+                      <option value="critical">critical</option>
+                    </select>
+                    <select
+                      value={submitStatus}
+                      onChange={(e) => setSubmitStatus(e.target.value)}
+                      className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="draft">draft</option>
+                      <option value="submitted">submitted</option>
+                      <option value="approved">approved</option>
+                      <option value="protected">protected</option>
+                    </select>
+                    <div className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-400">
+                      {submitPromptText.length.toLocaleString()} chars
+                    </div>
+                  </div>
+                  {submitResult?.success && (
+                    <div className="mt-3 text-xs text-emerald-300 bg-emerald-950/20 border border-emerald-900/60 rounded-lg p-3">
+                      Submitted as <span className="font-mono">{submitResult.submission.promptUid}</span> · {submitResult.submission.classification.categories.join(', ')}
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">

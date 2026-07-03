@@ -56,3 +56,31 @@ The UI flags:
 - attachment count mismatch
 
 This catches cases like a prompt version claiming chunks exist while `prompt_chunks` has no matching rows.
+
+
+## Prompt Submission / Protection Intake
+
+The existing `prompt_versions` and `prompt_chunks` schemas are optimized for the extraction pipeline:
+
+- `prompt_versions` stores version metadata and GCS artifact pointers.
+- `prompt_chunks` stores chunk metadata and GCS pointers, but does not store `chunk_text`.
+
+To avoid breaking that pipeline, direct UI submissions use a non-breaking intake table:
+
+`ctoteam.prism_prompt_catalog.prompt_submissions`
+
+The submit API auto-provisions this table if it is missing. It stores:
+
+- full submitted prompt text
+- deterministic classification JSON
+- categories
+- protection level: `none | internal | production | critical`
+- status: `draft | submitted | approved | protected`
+- raw SHA-256 hash
+- submitter and timestamps
+
+API route:
+
+- `POST /api/prompt-catalog/submit`
+
+This table is the portal intake/protection path. A later promotion job can convert approved submissions into the existing bronze/silver/gold extraction flow and SCD `prompt_versions` records.
