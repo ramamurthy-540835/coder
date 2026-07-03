@@ -156,6 +156,89 @@ def load_prompt_text(prompt_file: str | None, max_chars: int) -> str:
     return read_text_file(path, max_chars)
 
 
+
+def load_bigquery_prompt_context(*, prompt_uid: str, project_id: str, max_chars: int) -> str:
+    """Load prompt catalog context from BigQuery.
+
+    The current catalog stores version and chunk metadata. Some deployments store
+    chunk text elsewhere, so this function intentionally returns a concise
+    metadata context rather than assuming chunk content is present in BigQuery.
+    """
+    if not prompt_uid:
+        return ""
+    try:
+        from google.cloud import bigquery
+    except Exception as exc:
+        raise RuntimeError("google-cloud-bigquery is required for BigQuery context retrieval") from exc
+
+    client = bigquery.Client(project=project_id)
+    version_query = f"""
+    SELECT
+      prompt_uid,
+      source_prompt_id,
+      run_id,
+      version_number,
+      repeat_mode,
+      status,
+      chunk_count,
+      system_present,
+      user_message_count,
+      model_message_count,
+      raw_size_bytes,
+      extracted_chars,
+      bronze_gcs_uri,
+      silver_gcs_uri,
+      gold_gcs_uri
+    FROM `{project_id}.prism_prompt_catalog.prompt_versions`
+    WHERE prompt_uid = @prompt_uid AND is_current = TRUE
+    LIMIT 1
+    """
+    chunk_query = f"""
+    SELECT chunk_order, chunk_file, gcs_uri, char_count, estimated_tokens, role, artifact_type
+    FROM `{project_id}.prism_prompt_catalog.prompt_chunks`
+    WHERE prompt_uid = @prompt_uid
+    ORDER BY chunk_order ASC
+    LIMIT 50
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[bigquery.ScalarQueryParameter("prompt_uid", "STRING", prompt_uid)]
+    )
+    version_rows = list(client.query(version_query, job_config=job_config).result())
+    chunk_rows = list(client.query(chunk_query, job_config=job_config).result())
+
+    lines = [
+        "# BIGQUERY PROMPT CATALOG CONTEXT",
+        f"Prompt UID: {prompt_uid}",
+        "",
+    ]
+    if version_rows:
+        row = dict(version_rows[0])
+        lines.append("## Current Version")
+        for key, value in row.items():
+            lines.append(f"- {key}: {value}")
+    else:
+        lines.append("No current prompt_versions row found.")
+
+    lines.append("\n## Registered Chunks")
+    if chunk_rows:
+        for row in chunk_rows:
+            data = dict(row)
+            lines.append(
+                "- "
+                f"order={data.get('chunk_order')} "
+                f"file={data.get('chunk_file')} "
+                f"chars={data.get('char_count')} "
+                f"tokens={data.get('estimated_tokens')} "
+                f"gcs={data.get('gcs_uri')}"
+            )
+    else:
+        lines.append("No prompt_chunks rows found.")
+
+    rendered = "\n".join(lines).strip() + "\n"
+    if len(rendered) <= max_chars:
+        return rendered
+    return rendered[:max_chars] + "\n\n[TRUNCATED: BigQuery context exceeded character limit]\n"
+
 def build_context(
     *,
     task: str,
@@ -165,9 +248,30 @@ def build_context(
     max_files: int = 40,
     max_file_chars: int = 12000,
     max_prompt_chars: int = 80000,
+    bigquery_prompt_uid: str | None = None,
+    gcp_project_id: str | None = None,
 ) -> ProjectContext:
     """Build an orchestrator-ready project context."""
     prompt_text = load_prompt_text(prompt_file, max_prompt_chars)
+    bigquery_context_status = None
+    if bigquery_prompt_uid:
+        project_id = gcp_project_id or 'ctoteam'
+        try:
+            bq_text = load_bigquery_prompt_context(
+                prompt_uid=bigquery_prompt_uid,
+                project_id=project_id,
+                max_chars=max_prompt_chars,
+            )
+            prompt_text = (prompt_text + '\n\n' + bq_text).strip() if prompt_text else bq_text
+            bigquery_context_status = "loaded"
+        except Exception as exc:
+            bigquery_context_status = f"unavailable: {exc}"
+            warning = (
+                "# BIGQUERY PROMPT CATALOG CONTEXT\n"
+                f"Prompt UID: {bigquery_prompt_uid}\n"
+                f"Status: {bigquery_context_status}\n"
+            )
+            prompt_text = (prompt_text + '\n\n' + warning).strip() if prompt_text else warning
     project_files = load_project_files(
         context_roots,
         repo_root=repo_root,
@@ -179,6 +283,8 @@ def build_context(
         "project_file_count": len(project_files),
         "project_context_chars": sum(item.chars for item in project_files),
         "prompt_chars": len(prompt_text),
+        "bigquery_prompt_uid": bigquery_prompt_uid,
+        "bigquery_context_status": bigquery_context_status,
     }
     return ProjectContext(
         task=task,

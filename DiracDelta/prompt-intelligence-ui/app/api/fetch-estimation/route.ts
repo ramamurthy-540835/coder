@@ -5,13 +5,14 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const selectedUid = searchParams.get('promptUid') || '';
   
-  const bq = new BigQuery({ projectId: 'ctoteam' });
+  const projectId = process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'ctoteam';
+  const bq = new BigQuery({ projectId });
 
   try {
     // 1. Fetch all distinct prompt UIDs to populate the dropdown selection list
     const listQuery = `
       SELECT DISTINCT prompt_uid 
-      FROM \`ctoteam.prism_prompt_catalog.prompt_versions\`
+      FROM \`${projectId}.prism_prompt_catalog.prompt_versions\`
       ORDER BY prompt_uid;
     `;
     const [listRows] = await bq.query({ query: listQuery });
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
         extracted_chars, 
         status, 
         system_present
-      FROM \`ctoteam.prism_prompt_catalog.prompt_versions\`
+      FROM \`${projectId}.prism_prompt_catalog.prompt_versions\`
       WHERE prompt_uid = @prompt_uid AND is_current = TRUE
       LIMIT 1;
     `;
@@ -54,7 +55,7 @@ export async function GET(request: Request) {
         SELECT 
           estimated_tokens, actual_loc, confidence_score,
           raw_json, created_at
-        FROM \`ctoteam.prism_sentinel_estimation.ai_development_estimates\`
+        FROM \`${projectId}.prism_sentinel_estimation.ai_development_estimates\`
         WHERE prompt_id = @prompt_id
         ORDER BY created_at DESC
         LIMIT 1;
@@ -73,7 +74,7 @@ export async function GET(request: Request) {
     // 4. Fetch recent state machine audit events
     const eventsQuery = `
       SELECT event_type, lifecycle_status, repeat_mode, severity, created_at
-      FROM \`ctoteam.prism_prompt_catalog.prompt_events\`
+      FROM \`${projectId}.prism_prompt_catalog.prompt_events\`
       WHERE prompt_uid = @prompt_uid
       ORDER BY created_at DESC
       LIMIT 15;

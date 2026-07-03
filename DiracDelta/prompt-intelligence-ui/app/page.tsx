@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BarChart2, Play, RefreshCw, Terminal, CheckCircle2, 
-  AlertTriangle, Layers, Cpu, Code2, ExternalLink, ChevronDown 
+  AlertTriangle, Layers, Cpu, Code2, ExternalLink, ChevronDown, BrainCircuit 
 } from 'lucide-react';
 
 export default function Home() {
@@ -11,7 +11,10 @@ export default function Home() {
   const [actionLog, setActionLog] = useState<string>('');
   const [data, setData] = useState<any>(null);
   const [selectedUid, setSelectedUid] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'audit' | 'report'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'audit' | 'report' | 'orchestrator'>('overview');
+  const [orchestratorTask, setOrchestratorTask] = useState('Summarize what this project does');
+  const [orchestratorResult, setOrchestratorResult] = useState<any>(null);
+  const [orchestratorLoading, setOrchestratorLoading] = useState(false);
 
   const fetchDashboardData = async (uid?: string) => {
     try {
@@ -79,6 +82,38 @@ export default function Home() {
       setLoading(false);
     }
   };
+  const runOrchestrator = async () => {
+    setOrchestratorLoading(true);
+    setActionLog(`Starting orchestrator dry-run...\nTask: ${orchestratorTask}\n`);
+    try {
+      const res = await fetch('/api/orchestrator/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          task: orchestratorTask,
+          dryRun: true,
+          modelRoute: 'auto',
+          selectorMode: 'heuristic',
+          costMode: 'balanced',
+          contextRoots: ['agents/core', 'agents/runners'],
+          maxFiles: 8,
+          bigQueryPromptUid: selectedUid || undefined,
+        })
+      });
+      const json = await res.json();
+      setOrchestratorResult(json);
+      if (json.success) {
+        setActionLog(`--- ORCHESTRATOR DRY RUN ---\n${JSON.stringify(json.result, null, 2)}`);
+      } else {
+        setActionLog(`Orchestrator failed: ${json.error || 'Unknown error'}\n${json.stderr || ''}`);
+      }
+    } catch (e: any) {
+      setActionLog(`Network Error: ${e.message}`);
+    } finally {
+      setOrchestratorLoading(false);
+    }
+  };
+
 
   const latest = data?.latestVersion;
   const estimation = data?.estimation;
@@ -118,7 +153,7 @@ export default function Home() {
           </div>
 
           <p className="text-slate-400 text-sm mt-2">
-            Backend Workspace: <code className="text-indigo-300 font-mono bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">/DiracDelta/gcloud_run</code>
+            Backend roots are configured by <code className="text-indigo-300 font-mono bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">CODER_ROOT</code> and <code className="text-indigo-300 font-mono bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">GCLOUD_RUN_ROOT</code>
           </p>
         </div>
         
@@ -150,7 +185,7 @@ export default function Home() {
 
       {/* Tabs */}
       <div className="flex border-b border-slate-800 mb-6">
-        {(['overview', 'audit', 'report'] as const).map((tab) => (
+        {(['overview', 'audit', 'report', 'orchestrator'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -275,6 +310,82 @@ export default function Home() {
               )}
             </div>
           )}
+
+          {activeTab === 'orchestrator' && (() => {
+            const result = orchestratorResult?.result;
+            const selection = result?.selection;
+            const metrics = selection?.metrics;
+            return (
+              <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                  <div>
+                    <h2 className="text-lg font-bold flex items-center gap-2">
+                      <BrainCircuit className="w-5 h-5 text-indigo-400" /> Coding Agent Orchestrator
+                    </h2>
+                    <p className="text-sm text-slate-400 mt-1">Dry-run context loading, scorecard routing, and evidence generation.</p>
+                  </div>
+                  <button
+                    onClick={runOrchestrator}
+                    disabled={orchestratorLoading}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition disabled:opacity-50"
+                  >
+                    <Play className="w-4 h-4" /> {orchestratorLoading ? 'Running...' : 'Run Dry Selection'}
+                  </button>
+                </div>
+
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Task</label>
+                <textarea
+                  value={orchestratorTask}
+                  onChange={(e) => setOrchestratorTask(e.target.value)}
+                  className="w-full min-h-24 bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Logical Route</div>
+                    <div className="text-xl font-black text-white">{selection?.logical_route || 'not run'}</div>
+                  </div>
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Physical Model</div>
+                    <div className="text-xl font-black text-indigo-300">{selection?.physical_model || '-'}</div>
+                  </div>
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Confidence</div>
+                    <div className="text-xl font-black text-emerald-300">{selection?.confidence ? `${Math.round(selection.confidence * 100)}%` : '-'}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Complexity</div>
+                    <div className="text-2xl font-black text-white">{metrics?.complexity_score ?? '-'}/10</div>
+                  </div>
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Risk</div>
+                    <div className="text-2xl font-black text-white">{metrics?.risk_score ?? '-'}/10</div>
+                  </div>
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Estimated Tokens</div>
+                    <div className="text-2xl font-black text-white">{metrics?.estimated_tokens?.toLocaleString() || '-'}</div>
+                  </div>
+                </div>
+
+                <div className="mt-6 bg-slate-950/70 border border-slate-800 rounded-lg p-4 space-y-2 text-xs font-mono text-slate-300">
+                  <div><span className="text-slate-500">Selection evidence:</span> {result?.selection_evidence || '-'}</div>
+                  <div><span className="text-slate-500">Context manifest:</span> {result?.manifest || '-'}</div>
+                  <div><span className="text-slate-500">Composed prompt:</span> {result?.composed_prompt || '-'}</div>
+                  <div><span className="text-slate-500">Markdown report:</span> {result?.markdown || '(dry-run only)'}</div>
+                </div>
+
+                {selection?.reason && (
+                  <div className="mt-4 text-sm text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg p-4">
+                    <span className="text-slate-500 font-semibold">Reason:</span> {selection.reason}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
 
           {/* Action Logs Panel */}
           <div className="bg-slate-950 border border-indigo-950 rounded-xl p-6">

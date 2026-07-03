@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import path from 'path';
 
 const execAsync = promisify(exec);
 
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Missing promptId parameter' }, { status: 400 });
     }
     
-    const gcloudRunPath = '/home/appadmin/projects/Ram_Projects/DiracDelta/gcloud_run';
+    const gcloudRunPath = process.env.GCLOUD_RUN_ROOT || path.resolve(process.env.CODER_ROOT || path.resolve(process.cwd(), '../..'), 'gcloud_run');
 
     let command = '';
     if (action === 'refresh') {
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
       cwd: gcloudRunPath,
       env: { 
         ...process.env, 
-        PATH: `${process.env.PATH}:/snap/bin:/usr/bin:/home/appadmin/projects/Ram_Projects/DiracDelta/gcloud_run/venv/bin` 
+        PATH: `${process.env.PATH}:/snap/bin:/usr/bin:${gcloudRunPath}/venv/bin` 
       }
     });
 

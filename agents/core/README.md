@@ -121,3 +121,26 @@ Selector evidence is written to:
 ```text
 reports/orchestrator/model_selection_*.json
 ```
+
+
+## BigQuery Context
+
+The orchestrator can add prompt catalog metadata from BigQuery:
+
+```bash
+python3 agents/core/orchestrator.py \
+  --task "Summarize prompt catalog context" \
+  --bigquery-prompt-uid vertexai:3381323161097207808 \
+  --context-root agents/runners \
+  --dry-run
+```
+
+This requires `google-cloud-bigquery` in the Python runtime. On an externally managed host, use a virtual environment instead of system pip:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install google-cloud-bigquery requests
+```
+
+If BigQuery is unavailable, dry-runs continue and record `bigquery_context_status` in the context manifest.
