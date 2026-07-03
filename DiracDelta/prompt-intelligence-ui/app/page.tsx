@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BarChart2, Play, RefreshCw, Terminal, CheckCircle2, 
-  AlertTriangle, Layers, Cpu, Code2, ExternalLink, ChevronDown, BrainCircuit 
+  AlertTriangle, Layers, Cpu, Code2, ExternalLink, ChevronDown, BrainCircuit, Search 
 } from 'lucide-react';
 
 export default function Home() {
@@ -11,10 +11,15 @@ export default function Home() {
   const [actionLog, setActionLog] = useState<string>('');
   const [data, setData] = useState<any>(null);
   const [selectedUid, setSelectedUid] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'audit' | 'report' | 'orchestrator'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'audit' | 'report' | 'orchestrator' | 'catalog'>('overview');
   const [orchestratorTask, setOrchestratorTask] = useState('Summarize what this project does');
   const [orchestratorResult, setOrchestratorResult] = useState<any>(null);
   const [orchestratorLoading, setOrchestratorLoading] = useState(false);
+  const [catalogRows, setCatalogRows] = useState<any[]>([]);
+  const [catalogDetail, setCatalogDetail] = useState<any>(null);
+  const [catalogQuery, setCatalogQuery] = useState('');
+  const [catalogGapOnly, setCatalogGapOnly] = useState(false);
+  const [catalogLoading, setCatalogLoading] = useState(false);
 
   const fetchDashboardData = async (uid?: string) => {
     try {
@@ -114,6 +119,48 @@ export default function Home() {
     }
   };
 
+  const fetchPromptCatalog = async () => {
+    setCatalogLoading(true);
+    try {
+      const params = new URLSearchParams({ limit: '50' });
+      if (catalogQuery.trim()) params.set('q', catalogQuery.trim());
+      if (catalogGapOnly) params.set('gapOnly', 'true');
+      const res = await fetch(`/api/prompt-catalog/search?${params.toString()}`);
+      const json = await res.json();
+      if (json.success) {
+        setCatalogRows(json.rows || []);
+        if (!catalogDetail && json.rows?.[0]?.prompt_uid) {
+          await loadPromptDetail(json.rows[0].prompt_uid);
+        }
+      } else {
+        setActionLog(`Prompt catalog search failed: ${json.error || 'Unknown error'}`);
+      }
+    } catch (e: any) {
+      setActionLog(`Prompt catalog search error: ${e.message}`);
+    } finally {
+      setCatalogLoading(false);
+    }
+  };
+
+  const loadPromptDetail = async (promptUid: string) => {
+    setCatalogLoading(true);
+    try {
+      const res = await fetch(`/api/prompt-catalog/${encodeURIComponent(promptUid)}`);
+      const json = await res.json();
+      if (json.success) {
+        setCatalogDetail(json);
+        setSelectedUid(promptUid);
+      } else {
+        setActionLog(`Prompt detail failed: ${json.error || 'Unknown error'}`);
+      }
+    } catch (e: any) {
+      setActionLog(`Prompt detail error: ${e.message}`);
+    } finally {
+      setCatalogLoading(false);
+    }
+  };
+
+
 
   const latest = data?.latestVersion;
   const estimation = data?.estimation;
@@ -185,7 +232,7 @@ export default function Home() {
 
       {/* Tabs */}
       <div className="flex border-b border-slate-800 mb-6">
-        {(['overview', 'audit', 'report', 'orchestrator'] as const).map((tab) => (
+        {(['overview', 'catalog', 'audit', 'report', 'orchestrator'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -270,6 +317,131 @@ export default function Home() {
               </div>
             </>
           )}
+
+
+          {activeTab === 'catalog' && (() => {
+            const detail = catalogDetail;
+            const version = detail?.version;
+            const gaps = detail?.gaps || [];
+            const classification = detail?.classification;
+            return (
+              <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                  <div>
+                    <h2 className="text-lg font-bold flex items-center gap-2">
+                      <Search className="w-5 h-5 text-indigo-400" /> Prompt Catalog + Requirement Gathering
+                    </h2>
+                    <p className="text-sm text-slate-400 mt-1">Search the BigQuery lakehouse, inspect catalog health, and classify requirement signals.</p>
+                  </div>
+                  <button
+                    onClick={fetchPromptCatalog}
+                    disabled={catalogLoading}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition disabled:opacity-50"
+                  >
+                    <Search className="w-4 h-4" /> {catalogLoading ? 'Searching...' : 'Search Catalog'}
+                  </button>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-3 mb-5">
+                  <input
+                    value={catalogQuery}
+                    onChange={(e) => setCatalogQuery(e.target.value)}
+                    placeholder="Search prompt_uid or source prompt id"
+                    className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <label className="flex items-center gap-2 text-sm text-slate-300 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2">
+                    <input
+                      type="checkbox"
+                      checked={catalogGapOnly}
+                      onChange={(e) => setCatalogGapOnly(e.target.checked)}
+                      className="accent-indigo-500"
+                    />
+                    gaps only
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-800 text-xs font-bold uppercase tracking-wider text-slate-500">Search Results</div>
+                    <div className="max-h-[520px] overflow-y-auto">
+                      {catalogRows.length === 0 ? (
+                        <div className="p-4 text-sm text-slate-500">Click Search Catalog to load prompts.</div>
+                      ) : catalogRows.map((row: any) => (
+                        <button
+                          key={`${row.prompt_uid}-${row.run_id}`}
+                          onClick={() => loadPromptDetail(row.prompt_uid)}
+                          className={`w-full text-left p-4 border-b border-slate-800/70 hover:bg-slate-900 transition ${detail?.promptUid === row.prompt_uid ? 'bg-slate-900' : ''}`}
+                        >
+                          <div className="flex justify-between gap-3">
+                            <div className="font-mono text-xs text-indigo-300 truncate">{row.prompt_uid}</div>
+                            <span className={`text-[10px] px-2 py-0.5 rounded border ${row.has_gap ? 'text-amber-300 border-amber-900 bg-amber-950/30' : 'text-emerald-300 border-emerald-900 bg-emerald-950/30'}`}>
+                              {row.has_gap ? 'gap' : 'healthy'}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 mt-3 text-xs text-slate-400">
+                            <span>v{row.version_number}</span>
+                            <span>{row.actual_chunks}/{row.chunk_count} chunks</span>
+                            <span>{Number(row.extracted_chars || 0).toLocaleString()} chars</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Selected Prompt</div>
+                      <div className="font-mono text-sm text-indigo-300 break-all">{detail?.promptUid || 'none selected'}</div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 text-xs">
+                        <div><div className="text-slate-500">Version</div><div className="font-bold text-white">{version?.version_number ?? '-'}</div></div>
+                        <div><div className="text-slate-500">Status</div><div className="font-bold text-white">{version?.status || '-'}</div></div>
+                        <div><div className="text-slate-500">Chunks</div><div className="font-bold text-white">{detail?.chunks?.length ?? 0}/{version?.chunk_count ?? '-'}</div></div>
+                        <div><div className="text-slate-500">Events</div><div className="font-bold text-white">{detail?.events?.length ?? 0}</div></div>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Requirement Classification</div>
+                      <div className="flex flex-wrap gap-2">
+                        {(classification?.categories || ['not classified']).map((category: string) => (
+                          <span key={category} className="text-xs px-2 py-1 rounded border border-indigo-900 bg-indigo-950/30 text-indigo-200">{category}</span>
+                        ))}
+                      </div>
+                      <div className="text-xs text-slate-400 mt-3">Confidence: {classification?.confidence ? `${Math.round(classification.confidence * 100)}%` : '-'}</div>
+                      <div className="mt-3 space-y-1">
+                        {(classification?.missingRequirementSignals || []).slice(0, 4).map((gap: string) => (
+                          <div key={gap} className="text-xs text-amber-300">Needs signal: {gap}</div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Gap Detection</div>
+                      {gaps.length === 0 ? (
+                        <div className="text-sm text-emerald-300">No catalog gaps detected for the selected prompt.</div>
+                      ) : (
+                        <div className="space-y-2">
+                          {gaps.map((gap: any) => (
+                            <div key={gap.code} className="border border-amber-900/70 bg-amber-950/20 rounded-lg p-3">
+                              <div className="text-xs font-bold text-amber-300">{gap.code} · {gap.severity}</div>
+                              <div className="text-xs text-slate-300 mt-1">{gap.message}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4 text-xs font-mono text-slate-300 space-y-2">
+                      <div><span className="text-slate-500">Gold:</span> {version?.gold_gcs_uri || '-'}</div>
+                      <div><span className="text-slate-500">Silver:</span> {version?.silver_gcs_uri || '-'}</div>
+                      <div><span className="text-slate-500">Bronze:</span> {version?.bronze_gcs_uri || '-'}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
 
           {activeTab === 'audit' && (
             <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
