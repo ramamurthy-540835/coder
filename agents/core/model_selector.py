@@ -194,17 +194,23 @@ def detect_intent(text: str) -> list[str]:
 
 
 def score_task(*, task: str, prompt: str, context_metadata: dict[str, Any] | None, cost_mode: str) -> SelectionMetrics:
-    """Score task complexity and risk with explicit point evidence."""
+    """Score task complexity and risk with explicit point evidence.
+
+    Task wording is authoritative. Saved prompt/supporting context can add limited
+    evidence, but cannot activate high-risk floors by itself.
+    """
     metadata = context_metadata or {}
     context_file_count = int(metadata.get("project_file_count", 0) or 0)
     project_context_chars = int(metadata.get("project_context_chars", 0) or 0)
     prompt_chars = int(metadata.get("prompt_chars", len(prompt)) or len(prompt))
     total_chars = len(task) + prompt_chars + project_context_chars
     estimated_tokens = max(1, total_chars // 4)
-    # Intent comes from the user task and saved prompt only. Project files affect size/risk via metrics,
-    # but their internal keywords should not make a simple task look like a security audit.
-    text = f"{task}\n{prompt}".lower()
-    intent = detect_intent(text)
+
+    task_text = task.lower()
+    support_text = prompt.lower()
+    task_intent = detect_intent(task_text)
+    support_intent = [] if not support_text.strip() else detect_intent(support_text)
+    intent = list(dict.fromkeys([*task_intent, *[f"support_{item}" for item in support_intent if item != "general_coding"]]))
 
     complexity_items: list[ScoreItem] = []
     risk_items: list[ScoreItem] = []
@@ -224,34 +230,75 @@ def score_task(*, task: str, prompt: str, context_metadata: dict[str, Any] | Non
         add_score(complexity_items, "complexity", "context_size_50k_plus", 3, "Very large context size.")
 
     task_signals = {
-        "code_generation": ("code_generation", 1, "Code generation or implementation requested."),
-        "code_review": ("code_review", 1, "Review or audit requested."),
-        "testing": ("tests_required", 1, "Tests or validation mentioned."),
-        "deployment": ("deployment_required", 1, "Deployment or cloud workflow mentioned."),
-        "architecture": ("architecture_design", 2, "Architecture/design reasoning requested."),
-        "debugging": ("debug_root_cause", 2, "Debugging or root cause reasoning requested."),
-        "security_review": ("security_compliance", 2, "Security/compliance reasoning requested."),
+        "code_generation": ("code_generation", 1, "Code generation or implementation requested in task."),
+        "code_review": ("code_review", 1, "Review or audit requested in task."),
+        "testing": ("tests_required", 1, "Tests or validation mentioned in task."),
+        "deployment": ("deployment_required", 1, "Deployment or cloud workflow mentioned in task."),
+        "architecture": ("architecture_design", 2, "Architecture/design reasoning requested in task."),
+        "debugging": ("debug_root_cause", 2, "Debugging or root cause reasoning requested in task."),
+        "security_review": ("security_compliance", 2, "Security/compliance reasoning requested in task."),
     }
     for label, (signal, points, reason) in task_signals.items():
-        if label in intent:
+        if label in task_intent:
             add_score(complexity_items, "complexity", signal, points, reason)
-    if any(term in text for term in ["multi-step", "multi agent", "multi-agent", "orchestrate", "workflow"]):
-        add_score(complexity_items, "complexity", "multi_step_reasoning", 2, "Multi-step or orchestration language present.")
+    if any(term in task_text for term in ["multi-step", "multi agent", "multi-agent", "orchestrate", "workflow"]):
+        add_score(complexity_items, "complexity", "multi_step_reasoning", 2, "Multi-step or orchestration language present in task.")
 
-    if "security_review" in intent:
-        add_score(risk_items, "risk", "security_compliance_wording", 3, "Security/compliance work has higher failure impact.")
-    if any(term in text for term in ["production", "prod", "critical", "incident", "customer", "release"]):
-        add_score(risk_items, "risk", "production_critical_wording", 2, "Production or critical system mentioned.")
-    if any(term in text for term in ["gcp", "iam", "deploy", "cloud run", "cloudbuild", "workflow"]):
-        add_score(risk_items, "risk", "gcp_iam_deployment", 2, "Cloud/IAM/deployment changes carry operational risk.")
-    if any(term in text for term in ["bigquery write", "gcs write", "insert_rows", "load_table", "write to bigquery", "upload to gcs"]):
-        add_score(risk_items, "risk", "bigquery_gcs_write", 2, "Cloud data writes can mutate durable state.")
-    if any(term in text for term in ["execute generated", "run generated", "subprocess", "shell", "eval", "exec("]):
-        add_score(risk_items, "risk", "generated_code_execution", 3, "Generated or shell code execution mentioned.")
-    if context_file_count >= 3 or any(term in text for term in ["multi-file", "multiple files", "across files"]):
-        add_score(risk_items, "risk", "multi_file_change", 1, "Multi-file changes increase regression risk.")
-    if any(term in text for term in ["api key", "auth", "token", "credential", "secret", "external api"]):
-        add_score(risk_items, "risk", "external_api_secret_auth", 2, "Auth/secrets/external APIs require stricter handling.")
+    supporting_complexity_labels = {
+        "architecture",
+        "debugging",
+        "security_review",
+        "deployment",
+        "testing",
+        "code_review",
+        "code_generation",
+        "data_report",
+    }
+    if any(label in support_intent for label in supporting_complexity_labels):
+        add_score(
+            complexity_items,
+            "complexity",
+            "supporting_context_complexity",
+            1,
+            "Saved prompt/supporting context contains complexity signals; capped at +1.",
+        )
+
+    # Risk floor signals are intentionally task-only. Supporting context cannot
+    # by itself force security/production/IAM risk to 10.
+    if "security_review" in task_intent:
+        add_score(risk_items, "risk", "security_compliance_wording", 3, "Security/compliance requested in task.")
+    if any(term in task_text for term in ["production", "prod", "critical", "incident", "customer", "release"]):
+        add_score(risk_items, "risk", "production_critical_wording", 2, "Production or critical system mentioned in task.")
+    if any(term in task_text for term in ["gcp", "iam", "deploy", "cloud run", "cloudbuild", "workflow"]):
+        add_score(risk_items, "risk", "gcp_iam_deployment", 2, "Cloud/IAM/deployment changes mentioned in task.")
+    if any(term in task_text for term in ["bigquery write", "gcs write", "insert_rows", "load_table", "write to bigquery", "upload to gcs"]):
+        add_score(risk_items, "risk", "bigquery_gcs_write", 2, "Cloud data writes mentioned in task.")
+    if any(term in task_text for term in ["execute generated", "run generated", "subprocess", "shell", "eval", "exec("]):
+        add_score(risk_items, "risk", "generated_code_execution", 3, "Generated or shell code execution mentioned in task.")
+    if context_file_count >= 3 or any(term in task_text for term in ["multi-file", "multiple files", "across files"]):
+        add_score(risk_items, "risk", "multi_file_change", 1, "Multi-file context/change increases regression risk.")
+    if any(term in task_text for term in ["api key", "auth", "token", "credential", "secret", "external api"]):
+        add_score(risk_items, "risk", "external_api_secret_auth", 2, "Auth/secrets/external APIs mentioned in task.")
+
+    support_risk_terms = [
+        "security",
+        "iam",
+        "secret",
+        "credential",
+        "production",
+        "deploy",
+        "gcp",
+        "bigquery write",
+        "gcs write",
+    ]
+    if support_text and any(term in support_text for term in support_risk_terms):
+        add_score(
+            risk_items,
+            "risk",
+            "supporting_context_risk",
+            1,
+            "Saved prompt/supporting context contains risk signals; capped at +1 and cannot trigger risk floor.",
+        )
 
     complexity_score = clamp(1 + sum(item.points for item in complexity_items))
     risk_score = clamp(1 + sum(item.points for item in risk_items))
@@ -269,7 +316,6 @@ def score_task(*, task: str, prompt: str, context_metadata: dict[str, Any] | Non
         scorecard=scorecard,
         signals=signals,
     )
-
 
 def route_for_metrics(metrics: SelectionMetrics) -> tuple[str, str]:
     """Choose a base logical route from score metrics before feasibility/cost bias."""
