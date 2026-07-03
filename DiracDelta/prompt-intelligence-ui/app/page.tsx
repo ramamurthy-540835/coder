@@ -26,6 +26,8 @@ export default function Home() {
   const [submitProtectionLevel, setSubmitProtectionLevel] = useState('internal');
   const [submitStatus, setSubmitStatus] = useState('submitted');
   const [submitResult, setSubmitResult] = useState<any>(null);
+  const [semanticQuery, setSemanticQuery] = useState('security deployment BigQuery prompt governance');
+  const [semanticResults, setSemanticResults] = useState<any[]>([]);
 
   const fetchDashboardData = async (uid?: string) => {
     try {
@@ -125,6 +127,29 @@ export default function Home() {
     }
   };
 
+
+
+  const runSemanticSearch = async () => {
+    setCatalogLoading(true);
+    try {
+      const res = await fetch('/api/prompt-catalog/semantic-search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: semanticQuery, limit: 6, indexFirst: true })
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSemanticResults(json.results || []);
+        setActionLog(`Semantic search complete. Indexed rows: ${json.indexedRows}\n${JSON.stringify(json.results || [], null, 2)}`);
+      } else {
+        setActionLog(`Semantic search failed: ${json.error || 'Unknown error'}\n${JSON.stringify(json.details || {}, null, 2)}`);
+      }
+    } catch (e: any) {
+      setActionLog(`Semantic search error: ${e.message}`);
+    } finally {
+      setCatalogLoading(false);
+    }
+  };
 
   const submitPromptToCatalog = async () => {
     setCatalogLoading(true);
@@ -462,6 +487,41 @@ export default function Home() {
                   {submitResult?.success && (
                     <div className="mt-3 text-xs text-emerald-300 bg-emerald-950/20 border border-emerald-900/60 rounded-lg p-3">
                       Submitted as <span className="font-mono">{submitResult.submission.promptUid}</span> · {submitResult.submission.classification.categories.join(', ')}
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-4 mb-5">
+                  <div className="flex flex-col md:flex-row md:items-end gap-3 mb-4">
+                    <div className="flex-1">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Semantic Memory Search</div>
+                      <input
+                        value={semanticQuery}
+                        onChange={(e) => setSemanticQuery(e.target.value)}
+                        placeholder="Ask for relevant PRISM prompt context"
+                        className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <button
+                      onClick={runSemanticSearch}
+                      disabled={catalogLoading || !semanticQuery.trim()}
+                      className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50"
+                    >
+                      <Search className="w-4 h-4" /> Semantic Search
+                    </button>
+                  </div>
+                  {semanticResults.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {semanticResults.map((result: any) => (
+                        <div key={result.memoryId} className="border border-slate-800 bg-slate-900/70 rounded-lg p-3">
+                          <div className="flex justify-between gap-3 text-xs mb-2">
+                            <span className="font-mono text-indigo-300 truncate">{result.promptUid}</span>
+                            <span className="text-emerald-300">{Math.round((result.similarity || 0) * 100)}%</span>
+                          </div>
+                          <div className="text-sm font-semibold text-white truncate">{result.title || result.sourceType}</div>
+                          <div className="text-xs text-slate-400 mt-2 line-clamp-3">{result.textPreview}</div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

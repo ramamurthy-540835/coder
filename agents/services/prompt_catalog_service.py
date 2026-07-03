@@ -7,6 +7,7 @@ from typing import Any
 
 from agents.core.requirement_classifier import classify_requirement_text
 from agents.tools.bigquery_retriever import BigQueryPromptRetriever
+from agents.tools.semantic_memory import PrismSemanticMemory
 
 
 def detect_prompt_gaps(version: dict[str, Any] | None, chunks: list[dict[str, Any]], events: list[dict[str, Any]]) -> list[dict[str, str]]:
@@ -35,6 +36,7 @@ def detect_prompt_gaps(version: dict[str, Any] | None, chunks: list[dict[str, An
 
 class PromptCatalogService:
     def __init__(self, project_id: str = "ctoteam") -> None:
+        self.project_id = project_id
         self.retriever = BigQueryPromptRetriever(project_id=project_id)
 
     def search(self, query: str = "", status: str = "", limit: int = 50) -> list[dict[str, Any]]:
@@ -53,3 +55,10 @@ class PromptCatalogService:
         detail["gaps"] = detect_prompt_gaps(detail.get("version"), chunks, detail.get("events", []))
         detail["classification"] = classify_requirement_text(classification_text).to_dict()
         return detail
+
+
+    def semantic_search(self, query: str, limit: int = 8, *, index_submissions: bool = True) -> list[dict[str, object]]:
+        memory = PrismSemanticMemory(project_id=self.project_id)
+        if index_submissions:
+            memory.index_prompt_submissions(limit=200)
+        return [item.to_dict() for item in memory.search(query, limit=limit)]

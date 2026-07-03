@@ -29,6 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-route", default="auto", help="auto, glm5, grok43, grok420_reasoning, grok420_non_reasoning, codex")
     parser.add_argument("--prompt-file", help="Optional saved prompt file, for example prompts/prompt-0")
     parser.add_argument("--bigquery-prompt-uid", help="Optional prompt UID to load from BigQuery prompt catalog")
+    parser.add_argument("--semantic-query", help="Optional PRISM semantic memory query to retrieve ranked prompt context")
     parser.add_argument(
         "--context-root",
         action="append",
@@ -66,6 +67,7 @@ def main() -> int:
             max_file_chars=args.max_file_chars,
             max_prompt_chars=args.max_prompt_chars,
             bigquery_prompt_uid=args.bigquery_prompt_uid,
+            semantic_query=args.semantic_query,
             gcp_project_id=args.project_id,
         )
         evidence_dir = Path(args.output_dir or "reports/orchestrator")

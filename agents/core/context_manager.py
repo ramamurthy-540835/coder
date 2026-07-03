@@ -239,6 +239,35 @@ def load_bigquery_prompt_context(*, prompt_uid: str, project_id: str, max_chars:
         return rendered
     return rendered[:max_chars] + "\n\n[TRUNCATED: BigQuery context exceeded character limit]\n"
 
+
+def load_semantic_prompt_context(*, query: str, project_id: str, max_chars: int, limit: int = 6) -> str:
+    """Load ranked PRISM semantic memory context from BigQuery."""
+    try:
+        from agents.services.prompt_catalog_service import PromptCatalogService
+    except Exception as exc:
+        raise RuntimeError("prompt catalog semantic service is unavailable") from exc
+
+    service = PromptCatalogService(project_id=project_id)
+    results = service.semantic_search(query, limit=limit, index_submissions=True)
+    lines = ["# PRISM SEMANTIC MEMORY CONTEXT", f"Query: {query}", ""]
+    if not results:
+        lines.append("No semantic memory results found.")
+    for index, item in enumerate(results, start=1):
+        lines.extend([
+            f"## Result {index}: {item.get('prompt_uid')} ({item.get('source_type')})",
+            f"Similarity: {item.get('similarity')}",
+            f"Title: {item.get('title') or ''}",
+            f"Categories: {', '.join(item.get('categories') or [])}",
+            f"Protection: {item.get('protection_level') or ''} / Status: {item.get('status') or ''}",
+            "",
+            str(item.get('text_preview') or ''),
+            "",
+        ])
+    rendered = "\n".join(lines).strip() + "\n"
+    if len(rendered) <= max_chars:
+        return rendered
+    return rendered[:max_chars] + "\n\n[TRUNCATED: semantic context exceeded character limit]\n"
+
 def build_context(
     *,
     task: str,
@@ -249,6 +278,7 @@ def build_context(
     max_file_chars: int = 12000,
     max_prompt_chars: int = 80000,
     bigquery_prompt_uid: str | None = None,
+    semantic_query: str | None = None,
     gcp_project_id: str | None = None,
 ) -> ProjectContext:
     """Build an orchestrator-ready project context."""
@@ -272,6 +302,23 @@ def build_context(
                 f"Status: {bigquery_context_status}\n"
             )
             prompt_text = (prompt_text + '\n\n' + warning).strip() if prompt_text else warning
+    if semantic_query:
+        project_id = gcp_project_id or 'ctoteam'
+        try:
+            semantic_text = load_semantic_prompt_context(
+                query=semantic_query,
+                project_id=project_id,
+                max_chars=max_prompt_chars,
+            )
+            prompt_text = (prompt_text + '\n\n' + semantic_text).strip() if prompt_text else semantic_text
+        except Exception as exc:
+            warning = (
+                "# PRISM SEMANTIC MEMORY CONTEXT\n"
+                f"Query: {semantic_query}\n"
+                f"Status: unavailable: {exc}\n"
+            )
+            prompt_text = (prompt_text + '\n\n' + warning).strip() if prompt_text else warning
+
     project_files = load_project_files(
         context_roots,
         repo_root=repo_root,
@@ -285,6 +332,7 @@ def build_context(
         "prompt_chars": len(prompt_text),
         "bigquery_prompt_uid": bigquery_prompt_uid,
         "bigquery_context_status": bigquery_context_status,
+        "semantic_query": semantic_query,
     }
     return ProjectContext(
         task=task,

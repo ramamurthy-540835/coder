@@ -84,3 +84,39 @@ API route:
 - `POST /api/prompt-catalog/submit`
 
 This table is the portal intake/protection path. A later promotion job can convert approved submissions into the existing bronze/silver/gold extraction flow and SCD `prompt_versions` records.
+
+
+## Semantic Memory Layer
+
+PRISM uses **unified retrieval**, not forced promotion into one physical storage schema. That means:
+
+- UI submissions remain in `prompt_submissions`.
+- Vertex-extracted prompts remain in `prompt_versions` / `prompt_chunks`.
+- Agents retrieve from one semantic memory table.
+
+Semantic table:
+
+`ctoteam.prism_prompt_catalog.prompt_semantic_memory`
+
+This table stores:
+
+- `source_type` and `source_id`
+- `prompt_uid`
+- text used for retrieval
+- text hash
+- embedding vector
+- embedding model identifier
+- categories, status, and protection metadata
+
+V1 uses `local-hash-embedding-v1` so indexing and retrieval are deterministic, auditable, and zero-cost. The schema is designed so the embedding source can later be replaced with Vertex AI or BigQuery ML embeddings.
+
+Agent integration:
+
+```bash
+python3 agents/core/orchestrator.py \
+  --task "Review relevant PRISM prompt governance context" \
+  --semantic-query "security deployment BigQuery prompt governance" \
+  --dry-run
+```
+
+The context manager retrieves ranked semantic memory and appends it to the model context.
