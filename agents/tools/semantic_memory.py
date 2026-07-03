@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PRISM semantic memory utilities.
+"""PRISM retrieval memory utilities.
 
 V1 uses a deterministic hash embedding so the retrieval layer is testable without
 live model cost. The table schema is intentionally compatible with replacing the
@@ -23,7 +23,7 @@ except Exception:  # pragma: no cover - optional runtime dependency
     bigquery = None  # type: ignore[assignment]
 
 DATASET = "prism_prompt_catalog"
-TABLE = "prompt_semantic_memory"
+TABLE = "prompt_retrieval"
 EMBEDDING_DIMENSIONS = 128
 
 
@@ -232,7 +232,7 @@ class PrismSemanticMemory:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PRISM semantic memory indexing/search")
+    parser = argparse.ArgumentParser(description="PRISM retrieval memory indexing/search")
     parser.add_argument("--project-id", default="ctoteam")
     parser.add_argument("--index-submissions", action="store_true")
     parser.add_argument("--limit", type=int, default=100)

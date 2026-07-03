@@ -96,7 +96,7 @@ PRISM uses **unified retrieval**, not forced promotion into one physical storage
 
 Semantic table:
 
-`ctoteam.prism_prompt_catalog.prompt_semantic_memory`
+`ctoteam.prism_prompt_catalog.prompt_retrieval`
 
 This table stores:
 

@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { bigqueryClient, projectId } from '../_lib';
 
 const DATASET = 'prism_prompt_catalog';
-const TABLE = 'prompt_semantic_memory';
+const TABLE = 'prompt_retrieval';
 const DIMENSIONS = 128;
 
 function stableHash(text: string) {
