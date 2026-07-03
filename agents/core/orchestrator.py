@@ -16,6 +16,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from agents.core.context_manager import build_context, write_context_manifest
 from agents.core.model_router import run_model
+from agents.core.model_selector import select_model, write_selection
 
 
 DEFAULT_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "ctoteam")
@@ -25,7 +26,7 @@ DEFAULT_LOCATION = os.getenv("VERTEX_LOCATION", "global")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a structured PRISM coding-agent task.")
     parser.add_argument("--task", required=True, help="Coding/review/report task to run")
-    parser.add_argument("--model-route", default="grok43", help="glm5, grok43, grok420_reasoning, grok420_non_reasoning, codex")
+    parser.add_argument("--model-route", default="auto", help="auto, glm5, grok43, grok420_reasoning, grok420_non_reasoning, codex")
     parser.add_argument("--prompt-file", help="Optional saved prompt file, for example prompts/prompt-0")
     parser.add_argument(
         "--context-root",
@@ -42,6 +43,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--max-output-tokens", type=int, default=8192)
     parser.add_argument("--timeout", type=int, default=180)
+    parser.add_argument("--selector-mode", choices=["heuristic", "gemini"], default="heuristic")
+    parser.add_argument("--selector-model", default="gemini-3.5-flash")
     parser.add_argument("--dry-run", action="store_true", help="Build context and manifest but do not call a model")
     return parser.parse_args()
 
@@ -71,9 +74,28 @@ def main() -> int:
         evidence_dir.mkdir(parents=True, exist_ok=True)
         prompt_path.write_text(prompt, encoding="utf-8")
 
+        selected_route = args.model_route
+        selection_path = None
+        selection = None
+        if args.model_route == "auto":
+            selection = select_model(
+                task=args.task,
+                prompt=prompt,
+                mode=args.selector_mode,
+                project_id=args.project_id,
+                location=args.location,
+                selector_model=args.selector_model,
+                timeout_seconds=args.timeout,
+            )
+            selected_route = selection.route
+            selection_path = write_selection(selection, evidence_dir)
+
         if args.dry_run:
             print(json.dumps({
                 "status": "dry_run",
+                "selected_route": selected_route,
+                "selection": selection.to_dict() if selection else None,
+                "selection_evidence": str(selection_path) if selection_path else None,
                 "manifest": str(manifest_path),
                 "composed_prompt": str(prompt_path),
                 "metadata": context.metadata,
@@ -81,7 +103,7 @@ def main() -> int:
             return 0
 
         result = run_model(
-            route_name=args.model_route,
+            route_name=selected_route,
             prompt=prompt,
             source_name="orchestrator_task",
             project_id=args.project_id,
@@ -94,6 +116,8 @@ def main() -> int:
         print(json.dumps({
             "status": "success",
             "route": result.route.__dict__,
+            "selection": selection.to_dict() if selection else None,
+            "selection_evidence": str(selection_path) if selection_path else None,
             "manifest": str(manifest_path),
             "composed_prompt": str(prompt_path),
             "markdown": str(result.markdown_path),

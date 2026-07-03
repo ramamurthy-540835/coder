@@ -63,3 +63,44 @@ The orchestrator writes:
 - `reports/orchestrator/context_manifest_*.json`
 - `reports/orchestrator/composed_prompt_*.md`
 - model response `.md` and raw `.json` under the selected route output directory, unless overridden with `--output-dir`.
+
+## Auto Model Selection
+
+The orchestrator now defaults to `--model-route auto`.
+
+By default it uses a zero-cost heuristic selector:
+
+```bash
+python3 agents/core/orchestrator.py \
+  --task "Review the agents for security and architecture risks" \
+  --prompt-file prompts/prompt-0 \
+  --context-root agents \
+  --dry-run
+```
+
+Use Gemini as a JSON selector when you want a model-backed routing decision:
+
+```bash
+python3 agents/core/orchestrator.py \
+  --task "Choose the best model and review this code for production risks" \
+  --model-route auto \
+  --selector-mode gemini \
+  --selector-model gemini-3.5-flash \
+  --prompt-file prompts/prompt-0 \
+  --context-root agents \
+  --dry-run
+```
+
+Selector output is written to:
+
+```text
+reports/orchestrator/model_selection_*.json
+```
+
+Routing guide:
+
+- `glm5`: broad drafting, data/report work, cost-conscious generation.
+- `grok43`: balanced coding, review, and architecture work.
+- `grok420_reasoning`: hard reasoning, security, debugging, and complex design.
+- `grok420_non_reasoning`: fast code generation and simple refactors.
+- `codex`: registered placeholder for local direct-edit workflows.
