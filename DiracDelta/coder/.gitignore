@@ -6,7 +6,6 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyc
 *$py.class
 *.so
 .Python
@@ -58,13 +57,9 @@ logs/
 *.cache
 *.pid
 
-# Generated outputs
+# Generated outputs (keep output files if needed)
 saved_prompts/*/ai_estimation.md
 saved_prompts/*/claude_prompt.md
-.next/
-ui/.next/
-reports/*/*.json
-reports/*/*.md
 
 # Secrets and credentials
 .aws/
