@@ -85,25 +85,15 @@ Notes:
 - This is the recommended canonical PRISM frontend because it includes Prompt Catalog search/detail/gaps/classify/submit APIs, semantic memory search, estimation, pipeline execution, and orchestrator dry-run integration.
 - `npm run build` currently passes in this app.
 
-### Legacy Frontend: Root UI / Next.js Integration Layer
+### Removed Legacy Frontend: Root UI / Next.js Integration Layer
 
-Purpose: Root-level Next.js UI and integration layer for prompt, GCS, pipeline, and traceability workflows.
+Status: removed from the active repository.
 
-Primary locations:
+Reason:
 
-- `ui/`
-- `ui/app/`
-- `ui/components/`
-- `ui/app/api/`
-
-Notes:
-
-- This appears to be a newer or separate Next.js integration layer.
-- Keep this as a legacy/deployment dashboard until its useful pieces are migrated.
-- It includes Cloud Run deployment wiring through `ui/Dockerfile` and `ui/cloudbuild.yaml`.
-- It has a simpler 5-agent pipeline dashboard, GCS explorer, logs, and traceability matrix.
-- It does not currently build in this checkout without reinstalling dependencies (`next` is unavailable under `ui/node_modules`).
-- Do not delete it yet because deployment tooling references `coding-agent-dashboard` and `ui/cloudbuild.yaml`.
+- `DiracDelta/prompt-intelligence-ui/` is the canonical PRISM frontend.
+- The removed root `ui/` dashboard duplicated frontend ownership and did not build in this checkout without reinstalling dependencies.
+- The obsolete `coding-agent-dashboard` deploy target was removed from `agents/gcp_deployer_langgraph.py`.
 
 ### Prompt Catalog and Lakehouse Data
 
@@ -158,12 +148,11 @@ Primary locations:
 
 - `qa_review/`
 - `qa_review/code/`
-- `generated_code/`
 
 Notes:
 
 - `qa_review/` is referenced by active QA/auditor code.
-- `generated_code/` is referenced by the root UI Dockerfile and should not be removed without updating container build behavior.
+- `generated_code/` was removed after confirming no active runtime reference remained.
 
 ### Scripts and Deployment Glue
 
@@ -192,8 +181,8 @@ Notes:
 | Prompt source/evidence data | `saved_prompts/`, `prompts/` |
 | Orchestrator run evidence | `reports/orchestrator/` |
 | Canonical PRISM frontend | `DiracDelta/prompt-intelligence-ui/` |
-| Legacy/deployment dashboard | `ui/` |
-| QA/generated review artifacts | `qa_review/`, `generated_code/` |
+| Removed legacy dashboard | `ui/` removed |
+| QA/review artifacts | `qa_review/` |
 | Operational scripts | `scripts/`, `gcp-scripts/` |
 
 ## Target Architecture
@@ -223,7 +212,6 @@ agent_orchestration/
   pipelines/
   configs/
 
-ui/
 DiracDelta/
 reports/
 prompts/
@@ -402,16 +390,14 @@ Recent cleanup removed clearly unwanted tracked artifacts:
 Remaining folders that may look temporary but are still referenced:
 
 - `qa_review/`: referenced by `agents/agent_code_quality_auditor.py`
-- `generated_code/`: referenced by `ui/Dockerfile`
+- `generated_code/`: removed after root legacy UI cleanup.
 - `saved_prompts/`: prompt evidence and lakehouse source data
 - `reports/`: orchestrator/model output evidence
 
 ## Next Recommended Actions
 
-1. Migrate any still-useful `ui/` pieces into `DiracDelta/prompt-intelligence-ui/`, especially Cloud Run Docker/build config, GCS explorer, logs, and traceability views.
-2. Update deployment tooling to point the canonical frontend service at `DiracDelta/prompt-intelligence-ui/`.
-3. After migration and one successful deployment, archive or remove the legacy `ui/` folder.
-4. Add README files to `agents/providers/`, `agents/tools/`, and `agent_orchestration/` if these folders grow.
-5. Move durable prompt templates into a dedicated `prompts/system/` or `agent_orchestration/configs/` folder when the runtime loader is ready.
-6. Add a small import/compile CI check for `agents/core`, `agents/providers`, `agents/tools`, and `agents/runners`.
-7. Store this document, or a summarized version of it, in the PRISM Prompt Catalog as reusable architecture memory.
+1. Add Cloud Run deployment files for `DiracDelta/prompt-intelligence-ui/` if frontend deployment is still required.
+2. Add README files to `agents/providers/`, `agents/tools/`, and `agent_orchestration/` if these folders grow.
+3. Move durable prompt templates into a dedicated `prompts/system/` or `agent_orchestration/configs/` folder when the runtime loader is ready.
+4. Add a small import/compile CI check for `agents/core`, `agents/providers`, `agents/tools`, and `agents/runners`.
+5. Store this document, or a summarized version of it, in the PRISM Prompt Catalog as reusable architecture memory.

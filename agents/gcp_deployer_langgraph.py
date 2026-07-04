@@ -31,11 +31,6 @@ DEPLOY_TARGETS = {
     "dir": FRONTEND_DIR,
     "service": "prism-frontend",
     "config_file": "cloudbuild.yaml",
-  },
-  "coding-agent-dashboard": {
-    "dir": PROJECT_ROOT,
-    "service": "coding-agent-dashboard",
-    "config_file": "ui/cloudbuild.yaml",
   }
 }
 
