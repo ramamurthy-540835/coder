@@ -63,7 +63,7 @@ Notes:
 - The older `agent-orchestration/` folder name was consolidated.
 - Keep this area for workflow definitions, orchestration configs, and pipeline-level metadata.
 
-### Prompt Intelligence UI App
+### Canonical Frontend: Prompt Intelligence UI App
 
 Purpose: Prompt catalog intelligence interface and application layer.
 
@@ -82,8 +82,10 @@ Notes:
 
 - This appears to be the more complete prompt intelligence UI application.
 - API routes and application files live under `DiracDelta/prompt-intelligence-ui/app/`.
+- This is the recommended canonical PRISM frontend because it includes Prompt Catalog search/detail/gaps/classify/submit APIs, semantic memory search, estimation, pipeline execution, and orchestrator dry-run integration.
+- `npm run build` currently passes in this app.
 
-### Root UI / Next.js Integration Layer
+### Legacy Frontend: Root UI / Next.js Integration Layer
 
 Purpose: Root-level Next.js UI and integration layer for prompt, GCS, pipeline, and traceability workflows.
 
@@ -97,7 +99,11 @@ Primary locations:
 Notes:
 
 - This appears to be a newer or separate Next.js integration layer.
-- Keep it distinct from `DiracDelta/prompt-intelligence-ui/` until ownership is explicitly decided.
+- Keep this as a legacy/deployment dashboard until its useful pieces are migrated.
+- It includes Cloud Run deployment wiring through `ui/Dockerfile` and `ui/cloudbuild.yaml`.
+- It has a simpler 5-agent pipeline dashboard, GCS explorer, logs, and traceability matrix.
+- It does not currently build in this checkout without reinstalling dependencies (`next` is unavailable under `ui/node_modules`).
+- Do not delete it yet because deployment tooling references `coding-agent-dashboard` and `ui/cloudbuild.yaml`.
 
 ### Prompt Catalog and Lakehouse Data
 
@@ -185,8 +191,8 @@ Notes:
 | Prompt catalog feature docs | `docs/PROMPT_CATALOG_FEATURE.md` |
 | Prompt source/evidence data | `saved_prompts/`, `prompts/` |
 | Orchestrator run evidence | `reports/orchestrator/` |
-| Prompt intelligence UI | `DiracDelta/prompt-intelligence-ui/` |
-| Root integration UI | `ui/` |
+| Canonical PRISM frontend | `DiracDelta/prompt-intelligence-ui/` |
+| Legacy/deployment dashboard | `ui/` |
 | QA/generated review artifacts | `qa_review/`, `generated_code/` |
 | Operational scripts | `scripts/`, `gcp-scripts/` |
 
@@ -402,8 +408,10 @@ Remaining folders that may look temporary but are still referenced:
 
 ## Next Recommended Actions
 
-1. Decide whether `DiracDelta/prompt-intelligence-ui/` or `ui/` is the canonical frontend.
-2. Add README files to `agents/providers/`, `agents/tools/`, and `agent_orchestration/` if these folders grow.
-3. Move durable prompt templates into a dedicated `prompts/system/` or `agent_orchestration/configs/` folder when the runtime loader is ready.
-4. Add a small import/compile CI check for `agents/core`, `agents/providers`, `agents/tools`, and `agents/runners`.
-5. Store this document, or a summarized version of it, in the PRISM Prompt Catalog as reusable architecture memory.
+1. Migrate any still-useful `ui/` pieces into `DiracDelta/prompt-intelligence-ui/`, especially Cloud Run Docker/build config, GCS explorer, logs, and traceability views.
+2. Update deployment tooling to point the canonical frontend service at `DiracDelta/prompt-intelligence-ui/`.
+3. After migration and one successful deployment, archive or remove the legacy `ui/` folder.
+4. Add README files to `agents/providers/`, `agents/tools/`, and `agent_orchestration/` if these folders grow.
+5. Move durable prompt templates into a dedicated `prompts/system/` or `agent_orchestration/configs/` folder when the runtime loader is ready.
+6. Add a small import/compile CI check for `agents/core`, `agents/providers`, `agents/tools`, and `agents/runners`.
+7. Store this document, or a summarized version of it, in the PRISM Prompt Catalog as reusable architecture memory.
