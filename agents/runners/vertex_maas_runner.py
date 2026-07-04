@@ -13,134 +13,17 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
-import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import requests
-
+from agents.providers.xai import MODEL_PRESETS
+from agents.providers.vertex_maas import extract_text, safe_stem, vertex_generate_content
 
 DEFAULT_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "ctoteam")
 DEFAULT_LOCATION = os.getenv("VERTEX_LOCATION", "global")
 DEFAULT_PRESET = "grok43"
-
-MODEL_PRESETS: dict[str, dict[str, str]] = {
-    "glm5": {
-        "publisher": "zai-org",
-        "model": "glm-5-maas",
-        "output_dir": "reports/glm5",
-    },
-    "grok43": {
-        "publisher": "xai",
-        "model": "grok-4.3",
-        "output_dir": "reports/grok43",
-    },
-    "grok420_reasoning": {
-        "publisher": "xai",
-        "model": "grok-4.20-reasoning",
-        "output_dir": "reports/grok420_reasoning",
-    },
-    "grok420_non_reasoning": {
-        "publisher": "xai",
-        "model": "grok-4.20-non-reasoning",
-        "output_dir": "reports/grok420_non_reasoning",
-    },
-}
-
-
-def get_access_token() -> str:
-    """Return a Google Cloud access token from active gcloud auth."""
-    commands = [
-        ["gcloud", "auth", "print-access-token"],
-        ["gcloud", "auth", "application-default", "print-access-token"],
-    ]
-
-    for command in commands:
-        try:
-            result = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            token = result.stdout.strip()
-            if token:
-                return token
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            continue
-
-    raise RuntimeError(
-        "Could not get a GCP access token. Run: "
-        "gcloud auth login --no-launch-browser"
-    )
-
-
-def vertex_generate_content(
-    *,
-    project_id: str,
-    location: str,
-    publisher: str,
-    model: str,
-    prompt: str,
-    temperature: float,
-    max_output_tokens: int,
-    timeout_seconds: int,
-) -> dict[str, Any]:
-    """Call Vertex AI generateContent and return the raw JSON response."""
-    token = get_access_token()
-    url = (
-        f"https://aiplatform.googleapis.com/v1/projects/{project_id}"
-        f"/locations/{location}/publishers/{publisher}/models/{model}:generateContent"
-    )
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
-        "x-goog-user-project": project_id,
-    }
-    payload = {
-        "contents": [
-            {
-                "role": "user",
-                "parts": [{"text": prompt}],
-            }
-        ],
-        "generationConfig": {
-            "temperature": temperature,
-            "maxOutputTokens": max_output_tokens,
-        },
-    }
-
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-        timeout=timeout_seconds,
-    )
-    response.raise_for_status()
-    return response.json()
-
-
-def extract_text(response_json: dict[str, Any]) -> str:
-    """Extract generated text from a Vertex generateContent response."""
-    parts: list[str] = []
-    for candidate in response_json.get("candidates", []):
-        content = candidate.get("content", {})
-        for part in content.get("parts", []):
-            text = part.get("text")
-            if text:
-                parts.append(text)
-    return "\n\n".join(parts).strip()
-
-
-def safe_stem(value: str) -> str:
-    """Create a stable filesystem-friendly output stem."""
-    stem = Path(value).stem or "prompt"
-    stem = re.sub(r"[^A-Za-z0-9._-]+", "_", stem).strip("._-")
-    return stem or "prompt"
-
 
 def write_outputs(
     *,

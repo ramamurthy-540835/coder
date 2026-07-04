@@ -10,12 +10,8 @@ from pathlib import Path
 from typing import Any
 
 from agents.core.model_selector import LOGICAL_ROUTE_MODELS
-from agents.runners.vertex_maas_runner import (
-    MODEL_PRESETS,
-    extract_text,
-    safe_stem,
-    vertex_generate_content,
-)
+from agents.providers.xai import MODEL_PRESETS
+from agents.providers.vertex_maas import extract_text, safe_stem, vertex_generate_content
 
 
 @dataclass(frozen=True)
